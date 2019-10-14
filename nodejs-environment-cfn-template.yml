@@ -6,7 +6,7 @@ Parameters:
 
   ImageId:
     Type: AWS::EC2::Image::Id
-     Default: ami-00a1270ce1e007c27
+    Default: ami-00a1270ce1e007c27
 
   InstanceType:
     Type: String
