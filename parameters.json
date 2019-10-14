@@ -1,19 +1,8 @@
- 
-[
-    {
-      "Key": "ImageId",
-      "Value": "ami-00a1270ce1e007c27"
-    }, 
-    {
-      "Key": "InstanceType",
-      "Value": "t2.micro"
-    },
-    {
-      "Key": "KeyName",
-      "Value": "londonKey"
-    }, 
-    {
-      "Key": "VPCId",
-      "Value": "vpc-8a2eb4e2"
-    }
-  ]
+{ 
+  "Parameters": {
+     "ImageId": "ami-00a1270ce1e007c27",
+     "InstanceType": "t2.micro",
+     "KeyName": "londonKey",
+     "VPCId": "vpc-8a2eb4e2"
+  }
+}
