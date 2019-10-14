@@ -22,23 +22,18 @@ Parameters:
 
   Subnets:
     Type: CommaDelimitedList
-    Default: subnet-09ff0145, subnet-a02088da, subnet-c5deb2ac
 
   GithubUsername:
     Type: String
-    Default: 'AsmirIbr'
 
   GithubPersonalAccessToken:
     Type: String
-    Default: '08094824cf208822eaf3a3f1a5d392e978eb55be'
 
   GithubRepositoryName:
     Type: String
-    Default: 'IntertecTesting'
 
   GithubBranch:
     Type: String
-    Default: 'master'
 
 Resources:
 
