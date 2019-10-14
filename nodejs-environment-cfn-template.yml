@@ -6,11 +6,11 @@ Parameters:
 
   ImageId:
     Type: AWS::EC2::Image::Id
-    Default: ami-00a1270ce1e007c27
+    #Default: ami-00a1270ce1e007c27
 
   InstanceType:
     Type: String
-    Default: t2.micro
+    #Default: t2.micro
     AllowedValues: 
       - t2.micro
       - t2.medium
@@ -18,11 +18,11 @@ Parameters:
 
   KeyName:
     Type: String
-    Default: londonKey
+    #Default: londonKey
 
   VPCId:
     Type: String
-    Default: 'vpc-8a2eb4e2'
+    #Default: 'vpc-8a2eb4e2'
 
   Subnets:
     Type: CommaDelimitedList

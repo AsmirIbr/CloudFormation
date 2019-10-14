@@ -1,0 +1,19 @@
+ 
+[
+    {
+      "ParameterKey": "ImageId",
+      "ParameterValue": "ami-00a1270ce1e007c27"
+    }, 
+    {
+      "ParameterKey": "InstanceType",
+      "ParameterValue": "t2.micro"
+    },
+    {
+      "ParameterKey": "KeyName",
+      "ParameterValue": "londonKey"
+    }, 
+    {
+      "ParameterKey": "VPCId",
+      "ParameterValue": "vpc-8a2eb4e2"
+    }
+  ]
