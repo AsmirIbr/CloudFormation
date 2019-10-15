@@ -3,6 +3,9 @@ Description: Security groups for nodeJS
 
 Parameters:
 
+  VPCId:
+    Type: String
+    
 Resources:
 
   # SECURITY GROUP FOR INSTANCE
@@ -11,7 +14,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow http, ssh and port 3000
-      VpcId: !Ref s
+      VpcId: !Ref VPCId
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
