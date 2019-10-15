@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+Resources:
+
+  # SECURITY GROUP FOR INSTANCE
+
+  nodejsSecurityGroupForLaunchConfiguration:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http, ssh and port 3000
+      VpcId: !Ref s
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3000
+        ToPort: 3000
+        SourceSecurityGroupId: !GetAtt nodejsSecurityGroupForALB.GroupId
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 185.83.254.114/32
+    
+# SECURITY GROUP FOR APPLICATION LOAD BALANCER
+
+  nodejsSecurityGroupForALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http and ssh
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3000
+        ToPort: 3000
+        CidrIp: 0.0.0.0/0
