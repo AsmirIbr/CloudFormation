@@ -10,8 +10,8 @@ Resources:
 
   nodejsSecurityGroups:
     Type: AWS::CloudFormation::Stack
-      Properties:
-        TemplateURL: https://s3.amazonaws.com/nodejs-awso-artefacts/SourceArtifact/stacks/nodejs-security-groups.yml #required
-        Parameters: 
-          VPCId : !Ref VPCId
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/nodejs-awso-artefacts/SourceArtifact/stacks/nodejs-security-groups.yml #required
+      Parameters: 
+        VPCId : !Ref VPCId
   
