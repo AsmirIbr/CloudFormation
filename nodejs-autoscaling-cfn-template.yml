@@ -1,0 +1,416 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  ASG for nodeJS
+
+Parameters:
+
+  ImageId:
+    Type: AWS::EC2::Image::Id
+
+  InstanceType:
+    Type: String
+    AllowedValues: 
+      - t2.micro
+      - t2.medium
+      - t2.large
+
+  KeyName:
+    Type: String
+
+  VPCId:
+    Type: String
+
+  Subnets:
+    Type: CommaDelimitedList
+
+Resources:
+
+  # SECURITY GROUP FOR INSTANCE
+
+  nodejsSecurityGroupForLaunchConfiguration:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http, ssh and port 3000
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3000
+        ToPort: 3000
+        SourceSecurityGroupId: !GetAtt nodejsSecurityGroupForALB.GroupId
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 185.83.254.114/32
+    
+# SECURITY GROUP FOR APPLICATION LOAD BALANCER
+
+  nodejsSecurityGroupForALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http and ssh
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3000
+        ToPort: 3000
+        CidrIp: 0.0.0.0/0
+
+# ROLE FOR EC2
+
+  nodejsRoleForEC2:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      Path: /
+      RoleName: nodejsRoleForEC2
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# INSTANCE PROFILE FOR EC2
+
+  nodejsInstanceProfileForEC2:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles: [ !Ref nodejsRoleForEC2 ]
+  
+# TARGET GROUP FOR ALB
+
+  nodejsTargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      HealthCheckIntervalSeconds: 15
+      HealthCheckPath: '/lottery'
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 3000
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      Name: nodejs-tg1
+      Port: 3000
+      Protocol: HTTP
+      VpcId: !Ref VPCId
+
+# LISTENER RULE FOR ALB
+
+  nodejsListenerRule:
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      Actions: #required
+        - TargetGroupArn: !Ref "nodejsTargetGroup"
+          Type: forward
+          Order: 1
+      Conditions: #required
+        - Field: path-pattern
+          PathPatternConfig: 
+            Values: 
+            - '/lottery'
+      ListenerArn: !Ref MyALBlistener #required
+      Priority: 1 #required
+  
+
+# APPLICATION LOAD BALANCER LISTENER
+
+  MyALBlistener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - FixedResponseConfig:  
+          ContentType: text/plain
+          MessageBody: No data for you here!
+          StatusCode: 503
+        Type: fixed-response
+      LoadBalancerArn: !Ref 'nodejsALB'
+      Port: 80
+      Protocol: HTTP
+
+# APPLICATION LOAD BALANCER
+
+  nodejsALB:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      IpAddressType: ipv4
+      Subnets: !Ref Subnets
+      Name: nodejsApplicationLoadbalancer
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups: 
+      - Ref: "nodejsSecurityGroupForALB"
+      Tags:
+      - Key: 'Name'
+        Value: 'nodejsALB'
+      - Key: 'Costs'
+        Value: 'intern'
+  
+# AUTO SCALING GROUP - LAUNCH CONFIGURATION
+
+  nodejsLaunchConfiguration:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      AssociatePublicIpAddress: true
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      LaunchConfigurationName: nodejsLaunchConfiguration
+      IamInstanceProfile: !Ref nodejsInstanceProfileForEC2
+      SecurityGroups: 
+        - Ref: "nodejsSecurityGroupForLaunchConfiguration"
+      UserData:  
+        Fn::Base64: !Sub |
+          #!/bin/bash -ex
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+          yum install -y gcc-c++ make -y
+          curl -sL https://rpm.nodesource.com/setup_10.x | sudo -E bash -
+          yum install -y nodejs
+          # Code deploy agent
+          yum install ruby -y
+          cd /home/ec2-user
+          wget https://aws-codedeploy-eu-west-2.s3.eu-west-2.amazonaws.com/latest/install
+          chmod +x ./install
+          sudo ./install auto
+          # CFN-INI
+          yum install -y aws-cfn-bootstrap
+          /opt/aws/bin/cfn-init --region ${AWS::Region} --stack ${AWS::StackName} --resource nodejsLaunchConfiguration
+    Metadata:
+      AWS::CloudFormation::Init: 
+        config:
+          files: 
+            '/etc/cfn/cfn-hup.conf':
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+                verbose=true
+              mode: '000400'
+              owner: root
+              group: root
+            '/etc/cfn/hooks.d/cfn-auto-reloader.conf':
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.nodejsLaunchConfiguration.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init --stack ${AWS::StackName} --region ${AWS::Region} --resource nodejsLaunchConfiguration
+                runas=root
+            '/etc/init.d/nodejs':
+              content: !Sub |
+                #!/bin/sh
+                APP_NAME="app"
+                USER="root"
+                GROUP="$USER"
+                NODE_ENV="production"
+                PORT="3000"
+                APP_DIR="/root/lottery/dist"
+                NODE_APP="index.js"
+                KWARGS=""
+                CONFIG_DIR="$APP_DIR"
+                PID_DIR="$APP_DIR/pid"
+                PID_FILE="$PID_DIR/$APP_NAME.pid"
+                LOG_DIR="$APP_DIR/log"
+                LOG_FILE="$LOG_DIR/$APP_NAME.log"
+                NODE_EXEC="/bin/node"
+                
+                USAGE="Usage: $0 {start|stop|restart|status} [--force]"
+                FORCE_OP=false
+                if [ "$(id -u)" != "0" ]; then
+                  echo "This script must be run as root" 1>&2
+                  exit 1
+                fi
+                pid_file_exists() {
+                  [ -f "$PID_FILE" ]
+                }
+                get_pid() {
+                  echo "$(cat "$PID_FILE")"
+                }
+                is_running() {
+                  PID="$(get_pid)"
+                  [ -d /proc/$PID ]
+                }
+                start_it() {
+                  mkdir -p "$PID_DIR"
+                  chown $USER:$GROUP "$PID_DIR"
+                  mkdir -p "$LOG_DIR"
+                  chown $USER:$GROUP "$LOG_DIR"
+
+                  echo "Starting $APP_NAME ..."
+                  echo "cd $APP_DIR
+                    if [ $? -ne 0 ]; then
+                      exit
+                    fi
+                    set -a
+                    PORT=$PORT
+                    $NODE_EXEC \"$APP_DIR\"/$NODE_APP $KWARGS &>> \"$LOG_FILE\" &
+                    echo \$! > $PID_FILE" | sudo -i -u $USER
+                  echo "$APP_NAME started with pid $(get_pid)"
+                }
+                stop_process() {
+                  PID=$(get_pid)
+                  echo "Killing process $PID"
+                  kill $PID
+                  wait $PID 2>/dev/null
+                }
+                remove_pid_file() {
+                  echo "Removing pid file"
+                  rm -f "$PID_FILE"
+                }
+                start_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      PID=$(get_pid)
+                      echo "$APP_NAME already running with pid $PID"
+                      exit 1
+                    else
+                      echo "$APP_NAME stopped, but pid file exists"
+                      if [ $FORCE_OP = true ]
+                      then
+                        echo "Forcing start anyways"
+                        remove_pid_file
+                        start_it
+                      fi
+                    fi
+                  else
+                    start_it
+                  fi
+                }
+                stop_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      echo "Stopping $APP_NAME ..."
+                      stop_process
+                      remove_pid_file
+                      echo "$APP_NAME stopped"
+                    else
+                      echo "$APP_NAME already stopped, but pid file exists"
+                      if [ $FORCE_OP = true ]
+                      then
+                        echo "Forcing stop anyways ..."
+                        remove_pid_file
+                        echo "$APP_NAME stopped"
+                      else
+                        exit 1
+                      fi
+                    fi
+                  else
+                    echo "$APP_NAME already stopped, pid file does not exist"
+                    exit 1
+                  fi
+                }
+                status_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      PID=$(get_pid)
+                      echo "$APP_NAME running with pid $PID"
+                    else
+                      echo "$APP_NAME stopped, but pid file exists"
+                    fi
+                  else
+                    echo "$APP_NAME stopped"
+                  fi
+                }
+                case "$2" in
+                  --force)
+                    FORCE_OP=true
+                  ;;
+                  "")
+                  ;;
+                  *)
+                    echo $USAGE
+                    exit 1
+                  ;;
+                esac
+
+                case "$1" in
+                  start)
+                    start_app
+                  ;;
+                  stop)
+                    stop_app
+                  ;;
+                  restart)
+                    stop_app
+                    start_app
+                  ;;
+                  status)
+                    status_app
+                  ;;
+                  *)
+                    echo $USAGE
+                    exit 1
+                  ;;
+                esac
+              mode: '000755'
+              owner: root
+              group: root
+          services: 
+            sysvinit:
+              cfn-hup:
+                enabled: true
+                ensureRunning: true
+                files:
+                - '/etc/cfn/cfn-hup.conf'
+                - '/etc/cfn/hooks.d/cfn-auto-reloader.conf'
+              nodejs: 
+                ensureRunning: true
+                files: 
+                - "/etc/init.d/nodejs"
+
+# AUTO SCALING GROUP
+
+  nodejsAutoScalingGroup:
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      AutoScalingGroupName: nodejsAutoScalingGroup
+      AvailabilityZones:
+        Fn::GetAZs: 
+          Ref: "AWS::Region"
+      Cooldown: "150"
+      DesiredCapacity: "1"
+      HealthCheckGracePeriod: 60
+      HealthCheckType: EC2
+      TargetGroupARNs: 
+        - Ref: "nodejsTargetGroup"
+      LaunchConfigurationName: !Ref "nodejsLaunchConfiguration"
+      MaxSize: "1"
+      MinSize: "1"
+      Tags:
+      - Key: 'Name'
+        Value: 'nodejs-ASG-CFN'
+        PropagateAtLaunch: true
+      - Key: 'Costs'
+        Value: 'intern'
+        PropagateAtLaunch: true
+      
+# Output
+
+Outputs:
+
+  AutoScalingGroup:
+    Description: Information about the value
+    Value: !Ref nodejsAutoScalingGroup
+    Export: 
+      Name: autoScalingGroup

@@ -1,0 +1,276 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  CodePipeline for nodeJS
+
+Parameters:
+
+  GithubUsername:
+    Type: String
+
+  GithubPersonalAccessToken:
+    Type: String
+
+  GithubRepositoryName:
+    Type: String
+
+  GithubBranch:
+    Type: String
+
+Resources:
+
+# ROLE FOR CODE BUILD
+
+  nodejsRoleForCodeBuild:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "codebuild.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Description: "Allows CodeBuild to call AWS services on your behalf."
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+      Path: /
+      RoleName: nodejsRoleForCodeBuild
+      Policies:
+        - PolicyName: codebuildS3policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:*
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# ROLE FOR CODE DEPLOY
+
+  nodejsRoleForCodeDeploy:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Sid: ""
+            Principal:
+              Service:
+              - "codedeploy.us-west-1.amazonaws.com"
+              - "codedeploy.eu-west-3.amazonaws.com"
+              - "codedeploy.eu-west-2.amazonaws.com"
+              - "codedeploy.sa-east-1.amazonaws.com"
+              - "codedeploy.us-west-2.amazonaws.com"
+              - "codedeploy.ap-northeast-2.amazonaws.com"
+              - "codedeploy.us-east-2.amazonaws.com"
+              - "codedeploy.eu-west-1.amazonaws.com"
+              - "codedeploy.ap-southeast-1.amazonaws.com"
+              - "codedeploy.ap-south-1.amazonaws.com"
+              - "codedeploy.eu-central-1.amazonaws.com"
+              - "codedeploy.ap-northeast-1.amazonaws.com"
+              - "codedeploy.ap-east-1.amazonaws.com"
+              - "codedeploy.us-east-1.amazonaws.com"
+              - "codedeploy.ap-southeast-2.amazonaws.com"
+              - "codedeploy.ca-central-1.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Description: "Allows CodeDeploy to call AWS services on your behalf."
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AutoScalingFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+      Path: /
+      RoleName: nodejsRoleForCodeDeploy
+      Policies:
+        - PolicyName: codedepoloyS3policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:*
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# ROLE FOR CODE PIPELINE
+
+  nodejsRoleForCodePipeline:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+      Description: Allows CodePipeline to call AWS services on your behalf.
+      RoleName: nodejsRoleForCodePipeline
+      Policies:
+        - PolicyName: CloudPipelinePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "cloudformation:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codebuild:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codedeploy:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "sns:Publish"
+                Resource: "*"
+              - Effect: Allow
+                Action: s3:*
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+              - Effect: Allow
+                Action: "ec2:*"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: "*"
+
+# SNS FOR CodePipeline ( Manual approval )
+
+  SNStopicForManualApproval:
+    Type: "AWS::SNS::Topic"
+    Properties:
+      DisplayName: ManualApproval
+      Subscription:
+        - Protocol: email
+          Endpoint: asmir.ibrovikj@intertec.io
+
+
+# S3 BUCKET
+
+  nodejsS3bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: nodejs-awso-artefacts
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# CODE BUILD PROJECT
+
+  nodejsCodeBuild:
+    Type: "AWS::CodeBuild::Project"
+    Properties:
+      Source:
+        Type: S3
+        Location: !Sub |
+            ${nodejsS3bucket}/SourceOutput
+      Name: nodejs-CodeBuild
+      Artifacts:
+          Location: !Ref nodejsS3bucket
+          Name: "/"
+          Path: BuildOutput
+          NamespaceType: BUILD_ID
+          Type: S3
+      ServiceRole: !Ref "nodejsRoleForCodeBuild"
+      Environment: 
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+        Type: LINUX_CONTAINER
+
+# CODE DEPLOY APPLICATION
+
+  nodejsCodeDeployApplication:
+    Type: "AWS::CodeDeploy::Application"
+    Properties:
+      ApplicationName: nodejs
+      ComputePlatform: Server
+
+# CODE DEPLOY - DEPLOYMENT GROUP
+
+  nodejsCodeDeployDeploymentGroup:
+    Type: "AWS::CodeDeploy::DeploymentGroup"
+    Properties:
+      ApplicationName: !Ref "nodejsCodeDeployApplication"
+      AutoScalingGroups:
+        - Fn::ImportValue: autoScalingGroup
+      DeploymentGroupName: "nodejsDeploymentGroup"
+      ServiceRoleArn: !GetAtt nodejsRoleForCodeDeploy.Arn
+  
+# CODEPIPELINE
+
+  nodejsCodepipeline:
+    Type: "AWS::CodePipeline::Pipeline"
+    Properties:
+      ArtifactStore:
+        Type: S3 
+        Location: !Ref nodejsS3bucket
+      Name: nodejsCodepipeline
+      RestartExecutionOnUpdate: true
+      RoleArn: !GetAtt nodejsRoleForCodePipeline.Arn
+      Stages:
+        - Name: GetSource
+          Actions:
+            - Name: SourceAction
+              ActionTypeId: 
+                Category: Source
+                Owner: ThirdParty
+                Version: 1 
+                Provider: GitHub 
+              OutputArtifacts:
+                - Name: SourceOutput 
+              Region: !Ref "AWS::Region"
+              Configuration:
+                Owner: !Ref "GithubUsername"
+                Repo: !Ref "GithubRepositoryName"
+                Branch: !Ref "GithubBranch"
+                PollForSourceChanges: true
+                OAuthToken: !Ref "GithubPersonalAccessToken"
+              RunOrder: 1 
+        - Name: Build 
+          Actions: 
+            - Name: BuildProject 
+              InputArtifacts: 
+                - Name: SourceOutput 
+              ActionTypeId: 
+                Category: Build
+                Owner: AWS 
+                Version: 1 
+                Provider: CodeBuild
+              Configuration: 
+                ProjectName: !Ref "nodejsCodeBuild"
+              OutputArtifacts:
+                - Name: BuildOutput 
+              RunOrder: 2 
+        - Name: Approval 
+          Actions: 
+            - Name: ManualApproval
+              ActionTypeId: 
+                Category: Approval
+                Owner: AWS 
+                Version: 1 
+                Provider: Manual
+              Configuration:
+                NotificationArn: !Ref SNStopicForManualApproval
+              RunOrder: 3
+        - Name: Deploy 
+          Actions: 
+            - Name: DeployProject 
+              InputArtifacts: 
+                - Name: BuildOutput 
+              ActionTypeId: 
+                Category: Deploy
+                Owner: AWS 
+                Version: 1 
+                Provider: CodeDeploy
+              Configuration: 
+                ApplicationName: !Ref "nodejsCodeDeployApplication"
+                DeploymentGroupName: !Ref "nodejsCodeDeployDeploymentGroup"
+              RunOrder: 4
