@@ -78,13 +78,12 @@ Resources:
       Scheme: internet-facing
       Type: application
       SecurityGroups: 
-      - Ref: "nodejsSecurityGroupForALB"
+      - Ref: nodejsSecurityGroups.Outputs.nodejsSecurityGroupForALB
       Tags:
       - Key: 'Name'
         Value: 'nodejsALB'
       - Key: 'Costs'
         Value: 'intern'
-    DependsOn:  [ !Ref nodejsSecurityGroups ]
         
 Outputs:
 
