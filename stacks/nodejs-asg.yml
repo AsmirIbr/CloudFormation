@@ -250,7 +250,7 @@ Resources:
       HealthCheckGracePeriod: 60
       HealthCheckType: EC2
       TargetGroupARNs: 
-        - Ref: "nodejsTargetGroup"
+        - Fn::ImportValue: infrastructure-nodejsTargetGroup
       LaunchConfigurationName: !Ref "nodejsLaunchConfiguration"
       MaxSize: "1"
       MinSize: "1"
