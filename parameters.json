@@ -8,6 +8,7 @@
     "GithubUsername": "AsmirIbr",
     "GithubPersonalAccessToken": "08094824cf208822eaf3a3f1a5d392e978eb55be",
     "GithubRepositoryName": "IntertecTesting",
-    "GithubBranch": "master"
+    "GithubBranch": "master",
+    "nodejsS3bucket": "nodejs-awso-artefacts"
   }
 }

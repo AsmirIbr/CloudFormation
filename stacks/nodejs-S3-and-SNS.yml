@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+  BucketName: 
+    Type: String
+
+Resources:
+
+# S3 BUCKET
+
+  nodejsS3bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: nodejs-awso-artefacts
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# SNS FOR CodePipeline ( Manual approval )
+
+  SNStopicForManualApproval:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: ManualApproval
+        Subscription:
+          - Protocol: email
+            Endpoint: asmir.ibrovikj@intertec.io
+
+Outputs:
+
+
+Outputs:
+
+  nodejsS3bucket:
+    Value: !Ref nodejsS3bucket
+
+  SNStopicForManualApproval:
+    Value: !Ref SNStopicForManualApproval

@@ -1,0 +1,85 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+  Subnets: 
+    Type: String
+
+Resources:
+
+# TARGET GROUP FOR ALB
+
+  nodejsTargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      HealthCheckIntervalSeconds: 15
+      HealthCheckPath: '/lottery'
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 3000
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      Name: nodejs-tg1
+      Port: 3000
+      Protocol: HTTP
+      VpcId: !Ref VPCId
+
+# LISTENER RULE FOR ALB
+
+  nodejsListenerRule:
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      Actions: #required
+        - TargetGroupArn: !Ref "nodejsTargetGroup"
+          Type: forward
+          Order: 1
+      Conditions: #required
+        - Field: path-pattern
+          PathPatternConfig: 
+            Values: 
+            - '/lottery'
+      ListenerArn: !Ref MyALBlistener #required
+      Priority: 1 #required
+  
+
+# APPLICATION LOAD BALANCER LISTENER
+
+  MyALBlistener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - FixedResponseConfig:  
+          ContentType: text/plain
+          MessageBody: No data for you here!
+          StatusCode: 503
+        Type: fixed-response
+      LoadBalancerArn: !Ref 'nodejsALB'
+      Port: 80
+      Protocol: HTTP
+
+# APPLICATION LOAD BALANCER
+
+  nodejsALB:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      IpAddressType: ipv4
+      Subnets: !Ref Subnets
+      Name: nodejsApplicationLoadbalancer
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups: 
+      - Ref: "nodejsSecurityGroupForALB"
+      Tags:
+      - Key: 'Name'
+        Value: 'nodejsALB'
+      - Key: 'Costs'
+        Value: 'intern'
+        
+Outputs:
+
+  nodejsALB:
+    Value: !Ref nodejsALB
+
+  nodejsTargetGroup:
+    Value: !Ref nodejsTargetGroup

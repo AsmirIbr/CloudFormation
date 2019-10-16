@@ -162,3 +162,17 @@ Resources:
                 Action:
                   - iam:PassRole
                 Resource: "*"
+
+Outputs:
+
+  nodejsInstanceProfileForEC2:
+    Value: !Ref nodejsInstanceProfileForEC2
+
+  nodejsRoleForCodeBuild:
+    Value: !Ref nodejsRoleForCodeBuild
+
+  nodejsRoleForCodeDeploy:
+    Value: !Ref nodejsRoleForCodeDeploy
+
+  nodejsRoleForCodePipeline:
+    Value: !Ref nodejsRoleForCodePipeline
