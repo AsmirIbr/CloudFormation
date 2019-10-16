@@ -3,8 +3,17 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  Subnets: 
-    Type: CommaDelimitedList
+  Subnet1: 
+    Type: String
+
+  Subnet2: 
+    Type: String
+
+  Subnet3: 
+    Type: String
+
+  VPCId: 
+    Type: String
 
 Resources:
 
@@ -64,7 +73,7 @@ Resources:
     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
     Properties:
       IpAddressType: ipv4
-      Subnets: !Ref Subnets
+      Subnets: [ !Ref Subnet1, !Ref Subnet2, !Ref Subnet3 ]
       Name: nodejsApplicationLoadbalancer
       Scheme: internet-facing
       Type: application
