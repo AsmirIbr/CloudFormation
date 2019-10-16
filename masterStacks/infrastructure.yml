@@ -58,13 +58,14 @@ Resources:
         KeyName: !Ref KeyName
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-asg.yml" #required
   
-  # nodejsPipeline:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     Parameters:
-  #       Subnet1: !Select [ 0, !Ref Subnets ] 
-  #       Subnet2: !Select [ 1, !Ref Subnets ] 
-  #       Subnet3: !Select [ 0, !Ref Subnets ] 
-  #       VPCId: !Ref VPCId
-  #     TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-codepipeline.yml" #required
-  #     DependsOn: nodejsSecurityGroups
+  nodejsPipeline:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        GithubUsername: !Ref GithubUsername 
+        GithubPersonalAccessToken: !Ref GithubPersonalAccessToken 
+        GithubRepositoryName: !Ref GithubRepositoryName 
+        GithubBranch: !Ref GithubBranch 
+        nodejsS3: !Ref nodejsS3 
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-codepipeline.yml" #required
+  
