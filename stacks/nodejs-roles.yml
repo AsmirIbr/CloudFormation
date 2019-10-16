@@ -3,7 +3,7 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  nodejsS3bucket:
+  nodejsS3:
     Type: String
     
 Resources:
@@ -65,7 +65,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: s3:*
-                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
       Tags:
         - Key: Costs
           Value: intern
@@ -115,7 +115,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: s3:*
-                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
       Tags:
         - Key: Costs
           Value: intern
@@ -154,7 +154,7 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action: s3:*
-                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
               - Effect: Allow
                 Action: "ec2:*"
                 Resource: "*"

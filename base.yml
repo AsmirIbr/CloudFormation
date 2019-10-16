@@ -34,7 +34,7 @@ Parameters:
   GithubBranch:
     Type: String
   
-  nodejsS3bucket:
+  nodejsS3:
     Type: String
 
 Resources:
@@ -43,7 +43,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        nodejsS3bucket: !Ref nodejsS3bucket
+        nodejsS3: !Ref nodejsS3
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-S3-and-SNS.yml"
 
   nodejsSecurityGroups:
@@ -57,7 +57,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        nodejsS3bucket: !Ref nodejsS3bucket
+        nodejsS3: !Ref nodejsS3
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-roles.yml" #required
 
   nodejsALB:

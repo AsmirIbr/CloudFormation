@@ -3,7 +3,7 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  nodejsS3bucket: 
+  nodejsS3: 
     Type: String
 
 Resources:
@@ -13,7 +13,7 @@ Resources:
   nodejsS3bucket:
     Type: "AWS::S3::Bucket"
     Properties:
-      BucketName: !Ref nodejsS3bucket
+      BucketName: !Ref nodejsS3
       Tags:
         - Key: Costs
           Value: intern
@@ -32,6 +32,9 @@ Outputs:
 
 
 Outputs:
+
+  nodejsS3bucket:
+    Value: !Ref nodejsS3bucket
 
   SNStopicForManualApproval:
     Value: !Ref SNStopicForManualApproval
