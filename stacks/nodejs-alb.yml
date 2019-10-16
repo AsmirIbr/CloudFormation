@@ -3,15 +3,6 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  # Subnet1: 
-  #   Type: String
-
-  # Subnet2: 
-  #   Type: String
-
-  # Subnet3: 
-  #   Type: String
-
   VPCId: 
     Type: String
 
