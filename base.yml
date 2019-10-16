@@ -43,7 +43,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        BucketName: !Ref BucketName
+        nodejsS3bucket: !Ref nodejsS3bucket
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-S3-and-SNS.yml"
 
   nodejsSecurityGroups:
