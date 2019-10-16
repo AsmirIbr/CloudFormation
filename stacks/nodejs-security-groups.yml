@@ -45,3 +45,11 @@ Resources:
         FromPort: 3000
         ToPort: 3000
         CidrIp: 0.0.0.0/0
+
+Outputs:
+
+  nodejsSecurityGroupForLaunchConfiguration:
+    Value: !Ref nodejsSecurityGroupForLaunchConfiguration
+
+  nodejsSecurityGroupForALB:
+    Value: !Ref nodejsSecurityGroupForALB
