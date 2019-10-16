@@ -18,7 +18,7 @@ Parameters:
 
 Resources:
 
-AUTO SCALING GROUP - LAUNCH CONFIGURATION
+#AUTO SCALING GROUP - LAUNCH CONFIGURATION
 
   nodejsLaunchConfiguration:
     Type: "AWS::AutoScaling::LaunchConfiguration"
@@ -265,6 +265,6 @@ AUTO SCALING GROUP - LAUNCH CONFIGURATION
 Outputs:
 
   nodejsAutoScalingGroup:
-    Value: !Ref nodejsALB
+    Value: !Ref nodejsAutoScalingGroup
     Export:
       Name: infrastructure-nodejsAutoScalingGroup
