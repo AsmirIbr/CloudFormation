@@ -1,5 +1,6 @@
 { 
     "Parameters": {
-      "VPCId": "vpc-8a2eb4e2"
+      "VPCId": "vpc-8a2eb4e2",
+      "Subnets": "subnet-09ff0145, subnet-a02088da, subnet-c5deb2ac"
   }
 }
