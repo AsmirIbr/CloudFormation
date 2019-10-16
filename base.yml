@@ -11,4 +11,6 @@ Resources:
   nodejsSecurityGroups:
     Type: AWS::CloudFormation::Stack
     Properties:
+      Parameters:
+        VPCId: !Ref VPCId
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-security-groups.yml" #required

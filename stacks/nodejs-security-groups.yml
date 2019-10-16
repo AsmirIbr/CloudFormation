@@ -2,6 +2,9 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: Security groups for nodeJS
 
 Parameters:
+
+  VPCId:
+    Type: String
     
 Resources:
 
@@ -11,7 +14,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow http, ssh and port 3000
-      VpcId: vpc-8a2eb4e2
+      VpcId: !Ref VPCId
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
@@ -32,7 +35,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow http and ssh
-      VpcId: vpc-8a2eb4e2
+      VpcId: !Ref VPCId
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
