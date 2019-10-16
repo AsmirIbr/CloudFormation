@@ -74,9 +74,9 @@ Resources:
     Properties:
       IpAddressType: ipv4
       Subnets:
-        - Ref: subnet1
-        - Ref: subnet2
-        - Ref: subnet3
+        - Ref: Subnet1
+        - Ref: Subnet2
+        - Ref: Subnet3
       Name: nodejsApplicationLoadbalancer
       Scheme: internet-facing
       Type: application
