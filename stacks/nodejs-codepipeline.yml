@@ -27,8 +27,7 @@ Resources:
     Properties:
       Source:
         Type: S3
-        Location: !Sub |
-            ${nodejsS3}/SourceOutput
+        Location: !Sub ${nodejsS3}/SourceOutput
       Name: nodejs-CodeBuild
       Artifacts:
           Location: !Ref nodejsS3
