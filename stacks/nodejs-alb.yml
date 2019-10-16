@@ -92,6 +92,10 @@ Outputs:
 
   nodejsALB:
     Value: !Ref nodejsALB
+    Export: 
+      Name: infrastructure-nodejsALB
 
   nodejsTargetGroup:
     Value: !Ref nodejsTargetGroup
+    Export: 
+      Name: infrastructure-nodejsTargetGroup

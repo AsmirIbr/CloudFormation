@@ -3,16 +3,17 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  Subnet1: 
-    Type: String
+  ImageId:
+    Type: AWS::EC2::Image::Id
 
-  Subnet2: 
+  InstanceType:
     Type: String
+    AllowedValues: 
+      - t2.micro
+      - t2.medium
+      - t2.large
 
-  Subnet3: 
-    Type: String
-
-  VPCId: 
+  KeyName:
     Type: String
 
 Resources:
@@ -27,9 +28,10 @@ AUTO SCALING GROUP - LAUNCH CONFIGURATION
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       LaunchConfigurationName: nodejsLaunchConfiguration
-      IamInstanceProfile: !Ref nodejsInstanceProfileForEC2
+      IamInstanceProfile: 
+        Fn::ImportValue: base-nodejsInstanceProfileForEC2
       SecurityGroups: 
-        - Ref: "nodejsSecurityGroupForLaunchConfiguration"
+        - Fn::ImportValue: base-nodejsSecurityGroupForLaunchConfiguration
       UserData:  
         Fn::Base64: !Sub |
           #!/bin/bash -ex
@@ -262,8 +264,7 @@ AUTO SCALING GROUP - LAUNCH CONFIGURATION
         
 Outputs:
 
-  nodejsALB:
+  nodejsAutoScalingGroup:
     Value: !Ref nodejsALB
-
-  nodejsTargetGroup:
-    Value: !Ref nodejsTargetGroup
+    Export:
+      Name: infrastructure-nodejsAutoScalingGroup

@@ -168,19 +168,19 @@ Outputs:
   nodejsInstanceProfileForEC2:
     Value: !Ref nodejsInstanceProfileForEC2
     Export:
-      Name: !Sub base-nodejsInstanceProfileForEC2
+      Name: base-nodejsInstanceProfileForEC2
 
   nodejsRoleForCodeBuild:
     Value: !Ref nodejsRoleForCodeBuild
     Export:
-      Name: !Sub base-nodejsRoleForCodeBuild
+      Name: base-nodejsRoleForCodeBuild
 
   nodejsRoleForCodeDeploy:
     Value: !Ref nodejsRoleForCodeDeploy
     Export:
-      Name: !Sub base-nodejsRoleForCodeDeploy
+      Name: base-nodejsRoleForCodeDeploy
 
   nodejsRoleForCodePipeline:
     Value: !Ref nodejsRoleForCodePipeline
     Export:
-      Name: !Sub base-nodejsRoleForCodePipeline
+      Name: base-nodejsRoleForCodePipeline
