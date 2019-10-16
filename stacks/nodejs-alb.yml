@@ -81,7 +81,7 @@ Resources:
       Scheme: internet-facing
       Type: application
       SecurityGroups: 
-      - Ref: sgALB
+      - Fn::ImportValue: base-nodejsSecurityGroupForALB
       Tags:
       - Key: 'Name'
         Value: 'nodejsALB'

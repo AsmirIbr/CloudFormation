@@ -50,6 +50,10 @@ Outputs:
 
   nodejsSecurityGroupForLaunchConfiguration:
     Value: !Ref nodejsSecurityGroupForLaunchConfiguration
+    Export:
+      Name: !Sub base-nodejsSecurityGroupForLaunchConfiguration
 
   nodejsSecurityGroupForALB:
     Value: !Ref nodejsSecurityGroupForALB
+    Export:
+      Name: !Sub base-nodejsSecurityGroupForALB

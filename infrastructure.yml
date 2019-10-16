@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+  VPCId:
+    Type: String
+
+  Subnets:
+    Type: CommaDelimitedList
+
+Resources:
+
+  nodejsALB:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        Subnet1: !Select [ 0, !Ref Subnets ] 
+        Subnet2: !Select [ 1, !Ref Subnets ] 
+        Subnet3: !Select [ 0, !Ref Subnets ] 
+        VPCId: !Ref VPCId
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-alb.yml" #required
+  
+  # nodejsPipeline:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     Parameters:
+  #       Subnet1: !Select [ 0, !Ref Subnets ] 
+  #       Subnet2: !Select [ 1, !Ref Subnets ] 
+  #       Subnet3: !Select [ 0, !Ref Subnets ] 
+  #       VPCId: !Ref VPCId
+  #     TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-codepipeline.yml" #required
+  #     DependsOn: nodejsSecurityGroups
