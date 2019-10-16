@@ -4,7 +4,7 @@ Description: Security groups for nodeJS
 Parameters:
 
   Subnets: 
-    Type: String
+    Type: CommaDelimitedList
 
 Resources:
 
