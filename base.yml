@@ -13,4 +13,4 @@ Resources:
     Properties:
       Parameters:
         VPCId: !Ref VPCId
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/nodejs-security-groups.yml" #required
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-security-groups.yml" #required
