@@ -22,6 +22,21 @@ Parameters:
   Subnets:
     Type: CommaDelimitedList
 
+  GithubUsername:
+    Type: String
+
+  GithubPersonalAccessToken:
+    Type: String
+
+  GithubRepositoryName:
+    Type: String
+
+  GithubBranch:
+    Type: String
+
+  nodejsS3:
+    Type: String
+
 Resources:
 
   nodejsALB:

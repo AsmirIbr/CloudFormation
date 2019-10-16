@@ -3,7 +3,19 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  Subnets: 
+  GithubUsername:
+    Type: String
+
+  GithubPersonalAccessToken:
+    Type: String
+
+  GithubRepositoryName:
+    Type: String
+
+  GithubBranch:
+    Type: String
+
+  nodejsS3:
     Type: String
 
 Resources:
@@ -16,15 +28,16 @@ Resources:
       Source:
         Type: S3
         Location: !Sub |
-            ${nodejsS3bucket}/SourceOutput
+            ${nodejsS3}/SourceOutput
       Name: nodejs-CodeBuild
       Artifacts:
-          Location: !Ref nodejsS3bucket
+          Location: !Ref nodejsS3
           Name: "/"
           Path: BuildOutput
           NamespaceType: BUILD_ID
           Type: S3
-      ServiceRole: !Ref "nodejsRoleForCodeBuild"
+      ServiceRole: 
+        Fn::ImportValue: base-nodejsRoleForCodeBuild
       Environment: 
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:2.0
@@ -45,9 +58,11 @@ Resources:
     Properties:
       ApplicationName: !Ref "nodejsCodeDeployApplication"
       AutoScalingGroups:
-        - Ref: "nodejsAutoScalingGroup"
+        - Fn::ImportValue: infrastructure-nodejsAutoScalingGroup
       DeploymentGroupName: "nodejsDeploymentGroup"
-      ServiceRoleArn: !GetAtt nodejsRoleForCodeDeploy.Arn
+      ServiceRoleArn: 
+        Fn::ImportValue:
+          !Sub "${base-nodejsRoleForCodeDeploy}.Arn"
   
 # CODEPIPELINE
 
@@ -56,10 +71,12 @@ Resources:
     Properties:
       ArtifactStore:
         Type: S3 
-        Location: !Ref nodejsS3bucket
+        Location: !Ref nodejsS3
       Name: nodejsCodepipeline
       RestartExecutionOnUpdate: true
-      RoleArn: !GetAtt nodejsRoleForCodePipeline.Arn
+      RoleArn: 
+        Fn::ImportValue:
+          !Sub "${base-nodejsRoleForCodePipeline}.Arn"
       Stages:
         - Name: GetSource
           Actions:
@@ -103,7 +120,8 @@ Resources:
                 Version: 1 
                 Provider: Manual
               Configuration:
-                NotificationArn: !Ref SNStopicForManualApproval
+                NotificationArn: 
+                  Fn::ImportValue: base-SNStopicForManualApproval
               RunOrder: 3
         - Name: Deploy 
           Actions: 
