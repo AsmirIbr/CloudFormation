@@ -1,0 +1,269 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+  Subnet1: 
+    Type: String
+
+  Subnet2: 
+    Type: String
+
+  Subnet3: 
+    Type: String
+
+  VPCId: 
+    Type: String
+
+Resources:
+
+AUTO SCALING GROUP - LAUNCH CONFIGURATION
+
+  nodejsLaunchConfiguration:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      AssociatePublicIpAddress: true
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      LaunchConfigurationName: nodejsLaunchConfiguration
+      IamInstanceProfile: !Ref nodejsInstanceProfileForEC2
+      SecurityGroups: 
+        - Ref: "nodejsSecurityGroupForLaunchConfiguration"
+      UserData:  
+        Fn::Base64: !Sub |
+          #!/bin/bash -ex
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+          yum install -y gcc-c++ make -y
+          curl -sL https://rpm.nodesource.com/setup_10.x | sudo -E bash -
+          yum install -y nodejs
+          # Code deploy agent
+          yum install ruby -y
+          cd /home/ec2-user
+          wget https://aws-codedeploy-eu-west-2.s3.eu-west-2.amazonaws.com/latest/install
+          chmod +x ./install
+          sudo ./install auto
+          # CFN-INI
+          yum install -y aws-cfn-bootstrap
+          /opt/aws/bin/cfn-init --region ${AWS::Region} --stack ${AWS::StackName} --resource nodejsLaunchConfiguration
+    Metadata:
+      AWS::CloudFormation::Init: 
+        config:
+          files: 
+            '/etc/cfn/cfn-hup.conf':
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+                verbose=true
+              mode: '000400'
+              owner: root
+              group: root
+            '/etc/cfn/hooks.d/cfn-auto-reloader.conf':
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.nodejsLaunchConfiguration.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init --stack ${AWS::StackName} --region ${AWS::Region} --resource nodejsLaunchConfiguration
+                runas=root
+            '/etc/init.d/nodejs':
+              content: !Sub |
+                #!/bin/sh
+                APP_NAME="app"
+                USER="root"
+                GROUP="$USER"
+                NODE_ENV="production"
+                PORT="3000"
+                APP_DIR="/root/lottery/dist"
+                NODE_APP="index.js"
+                KWARGS=""
+                CONFIG_DIR="$APP_DIR"
+                PID_DIR="$APP_DIR/pid"
+                PID_FILE="$PID_DIR/$APP_NAME.pid"
+                LOG_DIR="$APP_DIR/log"
+                LOG_FILE="$LOG_DIR/$APP_NAME.log"
+                NODE_EXEC="/bin/node"
+                
+                USAGE="Usage: $0 {start|stop|restart|status} [--force]"
+                FORCE_OP=false
+                if [ "$(id -u)" != "0" ]; then
+                  echo "This script must be run as root" 1>&2
+                  exit 1
+                fi
+                pid_file_exists() {
+                  [ -f "$PID_FILE" ]
+                }
+                get_pid() {
+                  echo "$(cat "$PID_FILE")"
+                }
+                is_running() {
+                  PID="$(get_pid)"
+                  [ -d /proc/$PID ]
+                }
+                start_it() {
+                  mkdir -p "$PID_DIR"
+                  chown $USER:$GROUP "$PID_DIR"
+                  mkdir -p "$LOG_DIR"
+                  chown $USER:$GROUP "$LOG_DIR"
+
+                  echo "Starting $APP_NAME ..."
+                  echo "cd $APP_DIR
+                    if [ $? -ne 0 ]; then
+                      exit
+                    fi
+                    set -a
+                    PORT=$PORT
+                    $NODE_EXEC \"$APP_DIR\"/$NODE_APP $KWARGS &>> \"$LOG_FILE\" &
+                    echo \$! > $PID_FILE" | sudo -i -u $USER
+                  echo "$APP_NAME started with pid $(get_pid)"
+                }
+                stop_process() {
+                  PID=$(get_pid)
+                  echo "Killing process $PID"
+                  kill $PID
+                  wait $PID 2>/dev/null
+                }
+                remove_pid_file() {
+                  echo "Removing pid file"
+                  rm -f "$PID_FILE"
+                }
+                start_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      PID=$(get_pid)
+                      echo "$APP_NAME already running with pid $PID"
+                      exit 1
+                    else
+                      echo "$APP_NAME stopped, but pid file exists"
+                      if [ $FORCE_OP = true ]
+                      then
+                        echo "Forcing start anyways"
+                        remove_pid_file
+                        start_it
+                      fi
+                    fi
+                  else
+                    start_it
+                  fi
+                }
+                stop_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      echo "Stopping $APP_NAME ..."
+                      stop_process
+                      remove_pid_file
+                      echo "$APP_NAME stopped"
+                    else
+                      echo "$APP_NAME already stopped, but pid file exists"
+                      if [ $FORCE_OP = true ]
+                      then
+                        echo "Forcing stop anyways ..."
+                        remove_pid_file
+                        echo "$APP_NAME stopped"
+                      else
+                        exit 1
+                      fi
+                    fi
+                  else
+                    echo "$APP_NAME already stopped, pid file does not exist"
+                    exit 1
+                  fi
+                }
+                status_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      PID=$(get_pid)
+                      echo "$APP_NAME running with pid $PID"
+                    else
+                      echo "$APP_NAME stopped, but pid file exists"
+                    fi
+                  else
+                    echo "$APP_NAME stopped"
+                  fi
+                }
+                case "$2" in
+                  --force)
+                    FORCE_OP=true
+                  ;;
+                  "")
+                  ;;
+                  *)
+                    echo $USAGE
+                    exit 1
+                  ;;
+                esac
+
+                case "$1" in
+                  start)
+                    start_app
+                  ;;
+                  stop)
+                    stop_app
+                  ;;
+                  restart)
+                    stop_app
+                    start_app
+                  ;;
+                  status)
+                    status_app
+                  ;;
+                  *)
+                    echo $USAGE
+                    exit 1
+                  ;;
+                esac
+              mode: '000755'
+              owner: root
+              group: root
+          services: 
+            sysvinit:
+              cfn-hup:
+                enabled: true
+                ensureRunning: true
+                files:
+                - '/etc/cfn/cfn-hup.conf'
+                - '/etc/cfn/hooks.d/cfn-auto-reloader.conf'
+              nodejs: 
+                ensureRunning: true
+                files: 
+                - "/etc/init.d/nodejs"
+
+# AUTO SCALING GROUP
+
+  nodejsAutoScalingGroup:
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      AutoScalingGroupName: nodejsAutoScalingGroup
+      AvailabilityZones:
+        Fn::GetAZs: 
+          Ref: "AWS::Region"
+      Cooldown: "150"
+      DesiredCapacity: "1"
+      HealthCheckGracePeriod: 60
+      HealthCheckType: EC2
+      TargetGroupARNs: 
+        - Ref: "nodejsTargetGroup"
+      LaunchConfigurationName: !Ref "nodejsLaunchConfiguration"
+      MaxSize: "1"
+      MinSize: "1"
+      Tags:
+      - Key: 'Name'
+        Value: 'nodejs-ASG-CFN'
+        PropagateAtLaunch: true
+      - Key: 'Costs'
+        Value: 'intern'
+        PropagateAtLaunch: true
+        
+Outputs:
+
+  nodejsALB:
+    Value: !Ref nodejsALB
+
+  nodejsTargetGroup:
+    Value: !Ref nodejsTargetGroup
