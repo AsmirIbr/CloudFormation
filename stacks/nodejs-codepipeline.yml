@@ -60,7 +60,7 @@ Resources:
         - Fn::ImportValue: infrastructure-nodejsAutoScalingGroup
       DeploymentGroupName: "nodejsDeploymentGroup"
       ServiceRoleArn: 
-        Fn::ImportValue: base-nodejsRoleForCodePipeline
+        Fn::ImportValue: base-nodejsRoleForCodeDeploy
   
 # CODEPIPELINE
 
