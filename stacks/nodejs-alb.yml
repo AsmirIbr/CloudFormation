@@ -15,9 +15,6 @@ Parameters:
   VPCId: 
     Type: String
 
-  sgALB:
-    Type: String
-
 Resources:
 
 # TARGET GROUP FOR ALB
