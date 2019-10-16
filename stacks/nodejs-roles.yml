@@ -176,11 +176,11 @@ Outputs:
       Name: base-nodejsRoleForCodeBuild
 
   nodejsRoleForCodeDeploy:
-    Value: !Ref nodejsRoleForCodeDeploy
+    Value: !Ref nodejsRoleForCodeDeploy.Arn
     Export:
       Name: base-nodejsRoleForCodeDeploy
 
   nodejsRoleForCodePipeline:
-    Value: !Ref nodejsRoleForCodePipeline
+    Value: !Ref nodejsRoleForCodePipeline.Arn
     Export:
       Name: base-nodejsRoleForCodePipeline
