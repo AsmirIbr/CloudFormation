@@ -61,7 +61,8 @@ Resources:
       DeploymentGroupName: "nodejsDeploymentGroup"
       ServiceRoleArn: 
         Fn::ImportValue:
-          !Sub "${base-nodejsRoleForCodeDeploy}.Arn"
+          Fn::ImportValue: !Sub |
+            !GetAtt ${base-nodejsRoleForCodePipeline}.Arnn
   
 # CODEPIPELINE
 
@@ -74,8 +75,8 @@ Resources:
       Name: nodejsCodepipeline
       RestartExecutionOnUpdate: true
       RoleArn: 
-        Fn::ImportValue:
-          !Sub "${base-nodejsRoleForCodePipeline}.Arn"
+        Fn::ImportValue: !Sub |
+          !GetAtt ${base-nodejsRoleForCodePipeline}.Arn
       Stages:
         - Name: GetSource
           Actions:
