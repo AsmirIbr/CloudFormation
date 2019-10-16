@@ -84,6 +84,7 @@ Resources:
         Value: 'nodejsALB'
       - Key: 'Costs'
         Value: 'intern'
+    DependsOn: !Ref nodejsSecurityGroups
         
 Outputs:
 
