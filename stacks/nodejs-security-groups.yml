@@ -53,5 +53,3 @@ Outputs:
 
   nodejsSecurityGroupForALB:
     Value: !Ref nodejsSecurityGroupForALB
-    Export:
-      Name: !Sub nodejsSecurityGroupForALB

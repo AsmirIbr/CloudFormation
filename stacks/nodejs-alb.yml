@@ -15,6 +15,9 @@ Parameters:
   VPCId: 
     Type: String
 
+  sgALB:
+    Type: String
+
 Resources:
 
 # TARGET GROUP FOR ALB
@@ -78,7 +81,7 @@ Resources:
       Scheme: internet-facing
       Type: application
       SecurityGroups: 
-      - Ref: nodejsSecurityGroups.Outputs.nodejsSecurityGroupForALB
+      - Ref: sgALB
       Tags:
       - Key: 'Name'
         Value: 'nodejsALB'
