@@ -62,7 +62,7 @@ Resources:
       ServiceRoleArn: 
         Fn::ImportValue:
           Fn::ImportValue: !Sub |
-            !GetAtt [ ${base-nodejsRoleForCodePipeline}, Arn ]
+            Fn::GetAtt: [ ${base-nodejsRoleForCodePipeline}, Arn ]
   
 # CODEPIPELINE
 
@@ -76,7 +76,7 @@ Resources:
       RestartExecutionOnUpdate: true
       RoleArn: 
         Fn::ImportValue: !Sub |
-          !GetAtt [ ${base-nodejsRoleForCodePipeline}, Arn ]
+          Fn::GetAtt: [ ${base-nodejsRoleForCodePipeline}, Arn ]
       Stages:
         - Name: GetSource
           Actions:
