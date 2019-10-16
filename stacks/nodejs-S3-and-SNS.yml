@@ -3,7 +3,7 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  BucketName: 
+  nodejsS3bucket: 
     Type: String
 
 Resources:
@@ -13,7 +13,7 @@ Resources:
   nodejsS3bucket:
     Type: "AWS::S3::Bucket"
     Properties:
-      BucketName: nodejs-awso-artefacts
+      BucketName: !Ref nodejsS3bucket
       Tags:
         - Key: Costs
           Value: intern
