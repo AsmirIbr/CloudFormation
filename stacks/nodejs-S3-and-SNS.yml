@@ -33,8 +33,5 @@ Outputs:
 
 Outputs:
 
-  nodejsS3bucket:
-    Value: !Ref nodejsS3bucket
-
   SNStopicForManualApproval:
     Value: !Ref SNStopicForManualApproval
