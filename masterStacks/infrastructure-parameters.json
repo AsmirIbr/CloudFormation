@@ -1,6 +1,14 @@
 { 
   "Parameters": {
+    "ImageId": "ami-00a1270ce1e007c27",
+    "InstanceType": "t2.micro",
+    "KeyName": "londonKey",
     "VPCId": "vpc-8a2eb4e2",
     "Subnets": "subnet-09ff0145, subnet-a02088da, subnet-c5deb2ac",
+    "GithubUsername": "AsmirIbr",
+    "GithubPersonalAccessToken": "cf096626adffd241c018bd13f2782de295d91521",
+    "GithubRepositoryName": "IntertecTesting",
+    "GithubBranch": "master",
+    "nodejsS3": "nodejs-awso-artefacts"
   }
 }
