@@ -49,14 +49,14 @@ Resources:
         VPCId: !Ref VPCId
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-alb.yml" #required
     
-  # nodejsASG:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     Parameters:
-  #       ImageId: !Ref ImageId
-  #       InstanceType: !Ref InstanceType
-  #       KeyName: !Ref KeyName
-  #     TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-asg.yml" #required
+  nodejsASG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        ImageId: !Ref ImageId
+        InstanceType: !Ref InstanceType
+        KeyName: !Ref KeyName
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-asg.yml" #required
   
   # nodejsPipeline:
   #   Type: AWS::CloudFormation::Stack
