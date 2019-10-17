@@ -236,6 +236,23 @@ Resources:
                 files: 
                 - "/etc/init.d/nodejs"
 
+# AUTO SCALING GROUP - STEP SCALING~
+
+  nodejsScalingPolicyASG:
+    Type: "AWS::AutoScaling::ScalingPolicy"
+    Properties:
+      AdjustmentType: PercentChangeInCapacity
+      AutoScalingGroupName: !Ref nodejsAutoScalingGroup #required
+      EstimatedInstanceWarmup: 120
+      MetricAggregationType: Average
+      PolicyType: StepScaling
+      StepAdjustments:
+        - MetricIntervalLowerBound: 0
+          MetricIntervalUpperBound: 50
+          ScalingAdjustment: 1
+        - MetricIntervalLowerBound: 50
+          ScalingAdjustment: 2
+
 # AUTO SCALING GROUP
 
   nodejsAutoScalingGroup:
@@ -261,6 +278,7 @@ Resources:
       - Key: 'Costs'
         Value: 'intern'
         PropagateAtLaunch: true
+  
         
 Outputs:
 
