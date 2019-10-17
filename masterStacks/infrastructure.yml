@@ -3,18 +3,18 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  ImageId:
-    Type: AWS::EC2::Image::Id
+  # ImageId:
+  #   Type: AWS::EC2::Image::Id
 
-  InstanceType:
-    Type: String
-    AllowedValues: 
-      - t2.micro
-      - t2.medium
-      - t2.large
+  # InstanceType:
+  #   Type: String
+  #   AllowedValues: 
+  #     - t2.micro
+  #     - t2.medium
+  #     - t2.large
 
-  KeyName:
-    Type: String
+  # KeyName:
+  #   Type: String
 
   VPCId:
     Type: String
