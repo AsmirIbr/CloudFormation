@@ -1,674 +1,674 @@
-# AWSTemplateFormatVersion: "2010-09-09"
-# Description: >
-#   Environment for nodeJS
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Environment for nodeJS
 
-# Parameters:
+Parameters:
 
-#   ImageId:
-#     Type: AWS::EC2::Image::Id
+  ImageId:
+    Type: AWS::EC2::Image::Id
 
-#   InstanceType:
-#     Type: String
-#     AllowedValues: 
-#       - t2.micro
-#       - t2.medium
-#       - t2.large
+  InstanceType:
+    Type: String
+    AllowedValues: 
+      - t2.micro
+      - t2.medium
+      - t2.large
 
-#   KeyName:
-#     Type: String
+  KeyName:
+    Type: String
 
-#   VPCId:
-#     Type: String
+  VPCId:
+    Type: String
 
-#   Subnets:
-#     Type: CommaDelimitedList
+  Subnets:
+    Type: CommaDelimitedList
 
-#   GithubUsername:
-#     Type: String
+  GithubUsername:
+    Type: String
 
-#   GithubPersonalAccessToken:
-#     Type: String
+  GithubPersonalAccessToken:
+    Type: String
 
-#   GithubRepositoryName:
-#     Type: String
+  GithubRepositoryName:
+    Type: String
 
-#   GithubBranch:
-#     Type: String
+  GithubBranch:
+    Type: String
 
-# Resources:
+Resources:
 
-# # SECURITY GROUP FOR INSTANCE
+# SECURITY GROUP FOR INSTANCE
 
-#   nodejsSecurityGroupForLaunchConfiguration:
-#     Type: AWS::EC2::SecurityGroup
-#     Properties:
-#       GroupDescription: Allow http, ssh and port 3000
-#       VpcId: !Ref VPCId
-#       SecurityGroupIngress:
-#       - IpProtocol: tcp
-#         FromPort: 80
-#         ToPort: 80
-#         CidrIp: 0.0.0.0/0
-#       - IpProtocol: tcp
-#         FromPort: 3000
-#         ToPort: 3000
-#         SourceSecurityGroupId: !GetAtt nodejsSecurityGroupForALB.GroupId
-#       - IpProtocol: tcp
-#         FromPort: 22
-#         ToPort: 22
-#         CidrIp: 185.83.254.114/32
+  nodejsSecurityGroupForLaunchConfiguration:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http, ssh and port 3000
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3000
+        ToPort: 3000
+        SourceSecurityGroupId: !GetAtt nodejsSecurityGroupForALB.GroupId
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 185.83.254.114/32
     
-# # SECURITY GROUP FOR APPLICATION LOAD BALANCER
+# SECURITY GROUP FOR APPLICATION LOAD BALANCER
 
-#   nodejsSecurityGroupForALB:
-#     Type: AWS::EC2::SecurityGroup
-#     Properties:
-#       GroupDescription: Allow http and ssh
-#       VpcId: !Ref VPCId
-#       SecurityGroupIngress:
-#       - IpProtocol: tcp
-#         FromPort: 80
-#         ToPort: 80
-#         CidrIp: 0.0.0.0/0
-#       - IpProtocol: tcp
-#         FromPort: 3000
-#         ToPort: 3000
-#         CidrIp: 0.0.0.0/0
+  nodejsSecurityGroupForALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http and ssh
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3000
+        ToPort: 3000
+        CidrIp: 0.0.0.0/0
 
-# # ROLE FOR EC2
+# ROLE FOR EC2
 
-#   nodejsRoleForEC2:
-#     Type: "AWS::IAM::Role"
-#     Properties:
-#       AssumeRolePolicyDocument:
-#         Version: "2012-10-17"
-#         Statement:
-#           - Effect: "Allow"
-#             Principal:
-#               Service:
-#                 - "ec2.amazonaws.com"
-#             Action:
-#               - "sts:AssumeRole"
-#       ManagedPolicyArns:
-#         - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy
-#         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
-#       Path: /
-#       RoleName: nodejsRoleForEC2
-#       Tags:
-#         - Key: Costs
-#           Value: intern
+  nodejsRoleForEC2:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      Path: /
+      RoleName: nodejsRoleForEC2
+      Tags:
+        - Key: Costs
+          Value: intern
 
-# # INSTANCE PROFILE FOR EC2
+# INSTANCE PROFILE FOR EC2
 
-#   nodejsInstanceProfileForEC2:
-#     Type: "AWS::IAM::InstanceProfile"
-#     Properties:
-#       Path: "/"
-#       Roles: [ !Ref nodejsRoleForEC2 ]
+  nodejsInstanceProfileForEC2:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles: [ !Ref nodejsRoleForEC2 ]
 
-# # ROLE FOR CODE BUILD
+# ROLE FOR CODE BUILD
 
-#   nodejsRoleForCodeBuild:
-#     Type: "AWS::IAM::Role"
-#     Properties:
-#       AssumeRolePolicyDocument:
-#         Version: "2012-10-17"
-#         Statement:
-#           - Effect: "Allow"
-#             Principal:
-#               Service:
-#                 - "codebuild.amazonaws.com"
-#             Action:
-#               - "sts:AssumeRole"
-#       Description: "Allows CodeBuild to call AWS services on your behalf."
-#       ManagedPolicyArns:
-#         - arn:aws:iam::aws:policy/CloudWatchFullAccess
-#       Path: /
-#       RoleName: nodejsRoleForCodeBuild
-#       Policies:
-#         - PolicyName: codebuildS3policy
-#           PolicyDocument:
-#             Version: "2012-10-17"
-#             Statement:
-#               - Effect: Allow
-#                 Action: s3:*
-#                 Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
-#       Tags:
-#         - Key: Costs
-#           Value: intern
+  nodejsRoleForCodeBuild:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "codebuild.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Description: "Allows CodeBuild to call AWS services on your behalf."
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+      Path: /
+      RoleName: nodejsRoleForCodeBuild
+      Policies:
+        - PolicyName: codebuildS3policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:*
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+      Tags:
+        - Key: Costs
+          Value: intern
 
-# # ROLE FOR CODE DEPLOY
+# ROLE FOR CODE DEPLOY
 
-#   nodejsRoleForCodeDeploy:
-#     Type: "AWS::IAM::Role"
-#     Properties:
-#       AssumeRolePolicyDocument:
-#         Version: "2012-10-17"
-#         Statement:
-#           - Effect: "Allow"
-#             Sid: ""
-#             Principal:
-#               Service:
-#               - "codedeploy.us-west-1.amazonaws.com"
-#               - "codedeploy.eu-west-3.amazonaws.com"
-#               - "codedeploy.eu-west-2.amazonaws.com"
-#               - "codedeploy.sa-east-1.amazonaws.com"
-#               - "codedeploy.us-west-2.amazonaws.com"
-#               - "codedeploy.ap-northeast-2.amazonaws.com"
-#               - "codedeploy.us-east-2.amazonaws.com"
-#               - "codedeploy.eu-west-1.amazonaws.com"
-#               - "codedeploy.ap-southeast-1.amazonaws.com"
-#               - "codedeploy.ap-south-1.amazonaws.com"
-#               - "codedeploy.eu-central-1.amazonaws.com"
-#               - "codedeploy.ap-northeast-1.amazonaws.com"
-#               - "codedeploy.ap-east-1.amazonaws.com"
-#               - "codedeploy.us-east-1.amazonaws.com"
-#               - "codedeploy.ap-southeast-2.amazonaws.com"
-#               - "codedeploy.ca-central-1.amazonaws.com"
-#             Action:
-#               - "sts:AssumeRole"
-#       Description: "Allows CodeDeploy to call AWS services on your behalf."
-#       ManagedPolicyArns:
-#         - arn:aws:iam::aws:policy/AutoScalingFullAccess
-#         - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole
-#         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
-#         - arn:aws:iam::aws:policy/AmazonEC2FullAccess
-#       Path: /
-#       RoleName: nodejsRoleForCodeDeploy
-#       Policies:
-#         - PolicyName: codedepoloyS3policy
-#           PolicyDocument:
-#             Version: "2012-10-17"
-#             Statement:
-#               - Effect: Allow
-#                 Action: s3:*
-#                 Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
-#       Tags:
-#         - Key: Costs
-#           Value: intern
+  nodejsRoleForCodeDeploy:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Sid: ""
+            Principal:
+              Service:
+              - "codedeploy.us-west-1.amazonaws.com"
+              - "codedeploy.eu-west-3.amazonaws.com"
+              - "codedeploy.eu-west-2.amazonaws.com"
+              - "codedeploy.sa-east-1.amazonaws.com"
+              - "codedeploy.us-west-2.amazonaws.com"
+              - "codedeploy.ap-northeast-2.amazonaws.com"
+              - "codedeploy.us-east-2.amazonaws.com"
+              - "codedeploy.eu-west-1.amazonaws.com"
+              - "codedeploy.ap-southeast-1.amazonaws.com"
+              - "codedeploy.ap-south-1.amazonaws.com"
+              - "codedeploy.eu-central-1.amazonaws.com"
+              - "codedeploy.ap-northeast-1.amazonaws.com"
+              - "codedeploy.ap-east-1.amazonaws.com"
+              - "codedeploy.us-east-1.amazonaws.com"
+              - "codedeploy.ap-southeast-2.amazonaws.com"
+              - "codedeploy.ca-central-1.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Description: "Allows CodeDeploy to call AWS services on your behalf."
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AutoScalingFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+      Path: /
+      RoleName: nodejsRoleForCodeDeploy
+      Policies:
+        - PolicyName: codedepoloyS3policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:*
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+      Tags:
+        - Key: Costs
+          Value: intern
 
-# # ROLE FOR CODE PIPELINE
+# ROLE FOR CODE PIPELINE
 
-#   nodejsRoleForCodePipeline:
-#     Type: AWS::IAM::Role
-#     Properties:
-#       AssumeRolePolicyDocument:
-#         Version: "2012-10-17"
-#         Statement:
-#           - Effect: Allow
-#             Principal:
-#               Service:
-#                 - codepipeline.amazonaws.com
-#             Action: sts:AssumeRole
-#       Description: Allows CodePipeline to call AWS services on your behalf.
-#       RoleName: nodejsRoleForCodePipeline
-#       Policies:
-#         - PolicyName: CloudPipelinePolicy
-#           PolicyDocument:
-#             Version: "2012-10-17"
-#             Statement:
-#               - Effect: Allow
-#                 Action: "cloudformation:*"
-#                 Resource: "*"
-#               - Effect: Allow
-#                 Action: "codebuild:*"
-#                 Resource: "*"
-#               - Effect: Allow
-#                 Action: "codedeploy:*"
-#                 Resource: "*"
-#               - Effect: Allow
-#                 Action: "sns:Publish"
-#                 Resource: "*"
-#               - Effect: Allow
-#                 Action: s3:*
-#                 Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
-#               - Effect: Allow
-#                 Action: "ec2:*"
-#                 Resource: "*"
-#               - Effect: Allow
-#                 Action:
-#                   - iam:PassRole
-#                 Resource: "*"
+  nodejsRoleForCodePipeline:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+      Description: Allows CodePipeline to call AWS services on your behalf.
+      RoleName: nodejsRoleForCodePipeline
+      Policies:
+        - PolicyName: CloudPipelinePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "cloudformation:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codebuild:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codedeploy:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "sns:Publish"
+                Resource: "*"
+              - Effect: Allow
+                Action: s3:*
+                Resource: [ !Sub 'arn:aws:s3:::${nodejsS3bucket}', 'arn:aws:s3:::*/*', 'arn:aws:s3:*:*:job/*' ]
+              - Effect: Allow
+                Action: "ec2:*"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: "*"
 
-# # SNS FOR CodePipeline ( Manual approval )
+# SNS FOR CodePipeline ( Manual approval )
 
-#   SNStopicForManualApproval:
-#     Type: "AWS::SNS::Topic"
-#     Properties:
-#       DisplayName: ManualApproval
-#       Subscription:
-#         - Protocol: email
-#           Endpoint: asmir.ibrovikj@intertec.io
+  SNStopicForManualApproval:
+    Type: "AWS::SNS::Topic"
+    Properties:
+      DisplayName: ManualApproval
+      Subscription:
+        - Protocol: email
+          Endpoint: asmir.ibrovikj@intertec.io
   
-# # TARGET GROUP FOR ALB
+# TARGET GROUP FOR ALB
 
-#   nodejsTargetGroup:
-#     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
-#     Properties:
-#       HealthCheckIntervalSeconds: 15
-#       HealthCheckPath: '/lottery'
-#       HealthCheckProtocol: HTTP
-#       HealthCheckPort: 3000
-#       HealthCheckTimeoutSeconds: 10
-#       HealthyThresholdCount: 2
-#       UnhealthyThresholdCount: 2
-#       Name: nodejs-tg1
-#       Port: 3000
-#       Protocol: HTTP
-#       VpcId: !Ref VPCId
+  nodejsTargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      HealthCheckIntervalSeconds: 15
+      HealthCheckPath: '/lottery'
+      HealthCheckProtocol: HTTP
+      HealthCheckPort: 3000
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      Name: nodejs-tg1
+      Port: 3000
+      Protocol: HTTP
+      VpcId: !Ref VPCId
 
-# # LISTENER RULE FOR ALB
+# LISTENER RULE FOR ALB
 
-#   nodejsListenerRule:
-#     Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
-#     Properties:
-#       Actions: #required
-#         - TargetGroupArn: !Ref "nodejsTargetGroup"
-#           Type: forward
-#           Order: 1
-#       Conditions: #required
-#         - Field: path-pattern
-#           PathPatternConfig: 
-#             Values: 
-#             - '/lottery'
-#       ListenerArn: !Ref MyALBlistener #required
-#       Priority: 1 #required
+  nodejsListenerRule:
+    Type: "AWS::ElasticLoadBalancingV2::ListenerRule"
+    Properties:
+      Actions: #required
+        - TargetGroupArn: !Ref "nodejsTargetGroup"
+          Type: forward
+          Order: 1
+      Conditions: #required
+        - Field: path-pattern
+          PathPatternConfig: 
+            Values: 
+            - '/lottery'
+      ListenerArn: !Ref MyALBlistener #required
+      Priority: 1 #required
   
 
-# # APPLICATION LOAD BALANCER LISTENER
+# APPLICATION LOAD BALANCER LISTENER
 
-#   MyALBlistener:
-#     Type: AWS::ElasticLoadBalancingV2::Listener
-#     Properties:
-#       DefaultActions:
-#       - FixedResponseConfig:  
-#           ContentType: text/plain
-#           MessageBody: No data for you here!
-#           StatusCode: 503
-#         Type: fixed-response
-#       LoadBalancerArn: !Ref 'nodejsALB'
-#       Port: 80
-#       Protocol: HTTP
+  MyALBlistener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - FixedResponseConfig:  
+          ContentType: text/plain
+          MessageBody: No data for you here!
+          StatusCode: 503
+        Type: fixed-response
+      LoadBalancerArn: !Ref 'nodejsALB'
+      Port: 80
+      Protocol: HTTP
 
-# # APPLICATION LOAD BALANCER
+# APPLICATION LOAD BALANCER
 
-#   nodejsALB:
-#     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
-#     Properties:
-#       IpAddressType: ipv4
-#       Subnets: !Ref Subnets
-#       Name: nodejsApplicationLoadbalancer
-#       Scheme: internet-facing
-#       Type: application
-#       SecurityGroups: 
-#       - Ref: "nodejsSecurityGroupForALB"
-#       Tags:
-#       - Key: 'Name'
-#         Value: 'nodejsALB'
-#       - Key: 'Costs'
-#         Value: 'intern'
+  nodejsALB:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      IpAddressType: ipv4
+      Subnets: !Ref Subnets
+      Name: nodejsApplicationLoadbalancer
+      Scheme: internet-facing
+      Type: application
+      SecurityGroups: 
+      - Ref: "nodejsSecurityGroupForALB"
+      Tags:
+      - Key: 'Name'
+        Value: 'nodejsALB'
+      - Key: 'Costs'
+        Value: 'intern'
   
-# # AUTO SCALING GROUP - LAUNCH CONFIGURATION
+# AUTO SCALING GROUP - LAUNCH CONFIGURATION
 
-#   nodejsLaunchConfiguration:
-#     Type: "AWS::AutoScaling::LaunchConfiguration"
-#     Properties:
-#       AssociatePublicIpAddress: true
-#       ImageId: !Ref ImageId
-#       InstanceType: !Ref InstanceType
-#       KeyName: !Ref KeyName
-#       LaunchConfigurationName: nodejsLaunchConfiguration
-#       IamInstanceProfile: !Ref nodejsInstanceProfileForEC2
-#       SecurityGroups: 
-#         - Ref: "nodejsSecurityGroupForLaunchConfiguration"
-#       UserData:  
-#         Fn::Base64: !Sub |
-#           #!/bin/bash -ex
-#           exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-#           yum install -y gcc-c++ make -y
-#           curl -sL https://rpm.nodesource.com/setup_10.x | sudo -E bash -
-#           yum install -y nodejs
-#           # Code deploy agent
-#           yum install ruby -y
-#           cd /home/ec2-user
-#           wget https://aws-codedeploy-eu-west-2.s3.eu-west-2.amazonaws.com/latest/install
-#           chmod +x ./install
-#           sudo ./install auto
-#           # CFN-INI
-#           yum install -y aws-cfn-bootstrap
-#           /opt/aws/bin/cfn-init --region ${AWS::Region} --stack ${AWS::StackName} --resource nodejsLaunchConfiguration
-#     Metadata:
-#       AWS::CloudFormation::Init: 
-#         config:
-#           files: 
-#             '/etc/cfn/cfn-hup.conf':
-#               content: !Sub |
-#                 [main]
-#                 stack=${AWS::StackId}
-#                 region=${AWS::Region}
-#                 verbose=true
-#               mode: '000400'
-#               owner: root
-#               group: root
-#             '/etc/cfn/hooks.d/cfn-auto-reloader.conf':
-#               content: !Sub |
-#                 [cfn-auto-reloader-hook]
-#                 triggers=post.update
-#                 path=Resources.nodejsLaunchConfiguration.Metadata.AWS::CloudFormation::Init
-#                 action=/opt/aws/bin/cfn-init --stack ${AWS::StackName} --region ${AWS::Region} --resource nodejsLaunchConfiguration
-#                 runas=root
-#             '/etc/init.d/nodejs':
-#               content: !Sub |
-#                 #!/bin/sh
-#                 APP_NAME="app"
-#                 USER="root"
-#                 GROUP="$USER"
-#                 NODE_ENV="production"
-#                 PORT="3000"
-#                 APP_DIR="/root/lottery/dist"
-#                 NODE_APP="index.js"
-#                 KWARGS=""
-#                 CONFIG_DIR="$APP_DIR"
-#                 PID_DIR="$APP_DIR/pid"
-#                 PID_FILE="$PID_DIR/$APP_NAME.pid"
-#                 LOG_DIR="$APP_DIR/log"
-#                 LOG_FILE="$LOG_DIR/$APP_NAME.log"
-#                 NODE_EXEC="/bin/node"
+  nodejsLaunchConfiguration:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      AssociatePublicIpAddress: true
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      LaunchConfigurationName: nodejsLaunchConfiguration
+      IamInstanceProfile: !Ref nodejsInstanceProfileForEC2
+      SecurityGroups: 
+        - Ref: "nodejsSecurityGroupForLaunchConfiguration"
+      UserData:  
+        Fn::Base64: !Sub |
+          #!/bin/bash -ex
+          exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+          yum install -y gcc-c++ make -y
+          curl -sL https://rpm.nodesource.com/setup_10.x | sudo -E bash -
+          yum install -y nodejs
+          # Code deploy agent
+          yum install ruby -y
+          cd /home/ec2-user
+          wget https://aws-codedeploy-eu-west-2.s3.eu-west-2.amazonaws.com/latest/install
+          chmod +x ./install
+          sudo ./install auto
+          # CFN-INI
+          yum install -y aws-cfn-bootstrap
+          /opt/aws/bin/cfn-init --region ${AWS::Region} --stack ${AWS::StackName} --resource nodejsLaunchConfiguration
+    Metadata:
+      AWS::CloudFormation::Init: 
+        config:
+          files: 
+            '/etc/cfn/cfn-hup.conf':
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+                verbose=true
+              mode: '000400'
+              owner: root
+              group: root
+            '/etc/cfn/hooks.d/cfn-auto-reloader.conf':
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.nodejsLaunchConfiguration.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init --stack ${AWS::StackName} --region ${AWS::Region} --resource nodejsLaunchConfiguration
+                runas=root
+            '/etc/init.d/nodejs':
+              content: !Sub |
+                #!/bin/sh
+                APP_NAME="app"
+                USER="root"
+                GROUP="$USER"
+                NODE_ENV="production"
+                PORT="3000"
+                APP_DIR="/root/lottery/dist"
+                NODE_APP="index.js"
+                KWARGS=""
+                CONFIG_DIR="$APP_DIR"
+                PID_DIR="$APP_DIR/pid"
+                PID_FILE="$PID_DIR/$APP_NAME.pid"
+                LOG_DIR="$APP_DIR/log"
+                LOG_FILE="$LOG_DIR/$APP_NAME.log"
+                NODE_EXEC="/bin/node"
                 
-#                 USAGE="Usage: $0 {start|stop|restart|status} [--force]"
-#                 FORCE_OP=false
-#                 if [ "$(id -u)" != "0" ]; then
-#                   echo "This script must be run as root" 1>&2
-#                   exit 1
-#                 fi
-#                 pid_file_exists() {
-#                   [ -f "$PID_FILE" ]
-#                 }
-#                 get_pid() {
-#                   echo "$(cat "$PID_FILE")"
-#                 }
-#                 is_running() {
-#                   PID="$(get_pid)"
-#                   [ -d /proc/$PID ]
-#                 }
-#                 start_it() {
-#                   mkdir -p "$PID_DIR"
-#                   chown $USER:$GROUP "$PID_DIR"
-#                   mkdir -p "$LOG_DIR"
-#                   chown $USER:$GROUP "$LOG_DIR"
+                USAGE="Usage: $0 {start|stop|restart|status} [--force]"
+                FORCE_OP=false
+                if [ "$(id -u)" != "0" ]; then
+                  echo "This script must be run as root" 1>&2
+                  exit 1
+                fi
+                pid_file_exists() {
+                  [ -f "$PID_FILE" ]
+                }
+                get_pid() {
+                  echo "$(cat "$PID_FILE")"
+                }
+                is_running() {
+                  PID="$(get_pid)"
+                  [ -d /proc/$PID ]
+                }
+                start_it() {
+                  mkdir -p "$PID_DIR"
+                  chown $USER:$GROUP "$PID_DIR"
+                  mkdir -p "$LOG_DIR"
+                  chown $USER:$GROUP "$LOG_DIR"
 
-#                   echo "Starting $APP_NAME ..."
-#                   echo "cd $APP_DIR
-#                     if [ $? -ne 0 ]; then
-#                       exit
-#                     fi
-#                     set -a
-#                     PORT=$PORT
-#                     $NODE_EXEC \"$APP_DIR\"/$NODE_APP $KWARGS &>> \"$LOG_FILE\" &
-#                     echo \$! > $PID_FILE" | sudo -i -u $USER
-#                   echo "$APP_NAME started with pid $(get_pid)"
-#                 }
-#                 stop_process() {
-#                   PID=$(get_pid)
-#                   echo "Killing process $PID"
-#                   kill $PID
-#                   wait $PID 2>/dev/null
-#                 }
-#                 remove_pid_file() {
-#                   echo "Removing pid file"
-#                   rm -f "$PID_FILE"
-#                 }
-#                 start_app() {
-#                   if pid_file_exists
-#                   then
-#                     if is_running
-#                     then
-#                       PID=$(get_pid)
-#                       echo "$APP_NAME already running with pid $PID"
-#                       exit 1
-#                     else
-#                       echo "$APP_NAME stopped, but pid file exists"
-#                       if [ $FORCE_OP = true ]
-#                       then
-#                         echo "Forcing start anyways"
-#                         remove_pid_file
-#                         start_it
-#                       fi
-#                     fi
-#                   else
-#                     start_it
-#                   fi
-#                 }
-#                 stop_app() {
-#                   if pid_file_exists
-#                   then
-#                     if is_running
-#                     then
-#                       echo "Stopping $APP_NAME ..."
-#                       stop_process
-#                       remove_pid_file
-#                       echo "$APP_NAME stopped"
-#                     else
-#                       echo "$APP_NAME already stopped, but pid file exists"
-#                       if [ $FORCE_OP = true ]
-#                       then
-#                         echo "Forcing stop anyways ..."
-#                         remove_pid_file
-#                         echo "$APP_NAME stopped"
-#                       else
-#                         exit 1
-#                       fi
-#                     fi
-#                   else
-#                     echo "$APP_NAME already stopped, pid file does not exist"
-#                     exit 1
-#                   fi
-#                 }
-#                 status_app() {
-#                   if pid_file_exists
-#                   then
-#                     if is_running
-#                     then
-#                       PID=$(get_pid)
-#                       echo "$APP_NAME running with pid $PID"
-#                     else
-#                       echo "$APP_NAME stopped, but pid file exists"
-#                     fi
-#                   else
-#                     echo "$APP_NAME stopped"
-#                   fi
-#                 }
-#                 case "$2" in
-#                   --force)
-#                     FORCE_OP=true
-#                   ;;
-#                   "")
-#                   ;;
-#                   *)
-#                     echo $USAGE
-#                     exit 1
-#                   ;;
-#                 esac
+                  echo "Starting $APP_NAME ..."
+                  echo "cd $APP_DIR
+                    if [ $? -ne 0 ]; then
+                      exit
+                    fi
+                    set -a
+                    PORT=$PORT
+                    $NODE_EXEC \"$APP_DIR\"/$NODE_APP $KWARGS &>> \"$LOG_FILE\" &
+                    echo \$! > $PID_FILE" | sudo -i -u $USER
+                  echo "$APP_NAME started with pid $(get_pid)"
+                }
+                stop_process() {
+                  PID=$(get_pid)
+                  echo "Killing process $PID"
+                  kill $PID
+                  wait $PID 2>/dev/null
+                }
+                remove_pid_file() {
+                  echo "Removing pid file"
+                  rm -f "$PID_FILE"
+                }
+                start_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      PID=$(get_pid)
+                      echo "$APP_NAME already running with pid $PID"
+                      exit 1
+                    else
+                      echo "$APP_NAME stopped, but pid file exists"
+                      if [ $FORCE_OP = true ]
+                      then
+                        echo "Forcing start anyways"
+                        remove_pid_file
+                        start_it
+                      fi
+                    fi
+                  else
+                    start_it
+                  fi
+                }
+                stop_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      echo "Stopping $APP_NAME ..."
+                      stop_process
+                      remove_pid_file
+                      echo "$APP_NAME stopped"
+                    else
+                      echo "$APP_NAME already stopped, but pid file exists"
+                      if [ $FORCE_OP = true ]
+                      then
+                        echo "Forcing stop anyways ..."
+                        remove_pid_file
+                        echo "$APP_NAME stopped"
+                      else
+                        exit 1
+                      fi
+                    fi
+                  else
+                    echo "$APP_NAME already stopped, pid file does not exist"
+                    exit 1
+                  fi
+                }
+                status_app() {
+                  if pid_file_exists
+                  then
+                    if is_running
+                    then
+                      PID=$(get_pid)
+                      echo "$APP_NAME running with pid $PID"
+                    else
+                      echo "$APP_NAME stopped, but pid file exists"
+                    fi
+                  else
+                    echo "$APP_NAME stopped"
+                  fi
+                }
+                case "$2" in
+                  --force)
+                    FORCE_OP=true
+                  ;;
+                  "")
+                  ;;
+                  *)
+                    echo $USAGE
+                    exit 1
+                  ;;
+                esac
 
-#                 case "$1" in
-#                   start)
-#                     start_app
-#                   ;;
-#                   stop)
-#                     stop_app
-#                   ;;
-#                   restart)
-#                     stop_app
-#                     start_app
-#                   ;;
-#                   status)
-#                     status_app
-#                   ;;
-#                   *)
-#                     echo $USAGE
-#                     exit 1
-#                   ;;
-#                 esac
-#               mode: '000755'
-#               owner: root
-#               group: root
-#           services: 
-#             sysvinit:
-#               cfn-hup:
-#                 enabled: true
-#                 ensureRunning: true
-#                 files:
-#                 - '/etc/cfn/cfn-hup.conf'
-#                 - '/etc/cfn/hooks.d/cfn-auto-reloader.conf'
-#               nodejs: 
-#                 ensureRunning: true
-#                 files: 
-#                 - "/etc/init.d/nodejs"
+                case "$1" in
+                  start)
+                    start_app
+                  ;;
+                  stop)
+                    stop_app
+                  ;;
+                  restart)
+                    stop_app
+                    start_app
+                  ;;
+                  status)
+                    status_app
+                  ;;
+                  *)
+                    echo $USAGE
+                    exit 1
+                  ;;
+                esac
+              mode: '000755'
+              owner: root
+              group: root
+          services: 
+            sysvinit:
+              cfn-hup:
+                enabled: true
+                ensureRunning: true
+                files:
+                - '/etc/cfn/cfn-hup.conf'
+                - '/etc/cfn/hooks.d/cfn-auto-reloader.conf'
+              nodejs: 
+                ensureRunning: true
+                files: 
+                - "/etc/init.d/nodejs"
 
-# # AUTO SCALING GROUP
+# AUTO SCALING GROUP
 
-#   nodejsAutoScalingGroup:
-#     Type: "AWS::AutoScaling::AutoScalingGroup"
-#     Properties:
-#       AutoScalingGroupName: nodejsAutoScalingGroup
-#       AvailabilityZones:
-#         Fn::GetAZs: 
-#           Ref: "AWS::Region"
-#       Cooldown: "150"
-#       DesiredCapacity: "1"
-#       HealthCheckGracePeriod: 60
-#       HealthCheckType: EC2
-#       TargetGroupARNs: 
-#         - Ref: "nodejsTargetGroup"
-#       LaunchConfigurationName: !Ref "nodejsLaunchConfiguration"
-#       MaxSize: "1"
-#       MinSize: "1"
-#       Tags:
-#       - Key: 'Name'
-#         Value: 'nodejs-ASG-CFN'
-#         PropagateAtLaunch: true
-#       - Key: 'Costs'
-#         Value: 'intern'
-#         PropagateAtLaunch: true
+  nodejsAutoScalingGroup:
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      AutoScalingGroupName: nodejsAutoScalingGroup
+      AvailabilityZones:
+        Fn::GetAZs: 
+          Ref: "AWS::Region"
+      Cooldown: "150"
+      DesiredCapacity: "1"
+      HealthCheckGracePeriod: 60
+      HealthCheckType: EC2
+      TargetGroupARNs: 
+        - Ref: "nodejsTargetGroup"
+      LaunchConfigurationName: !Ref "nodejsLaunchConfiguration"
+      MaxSize: "1"
+      MinSize: "1"
+      Tags:
+      - Key: 'Name'
+        Value: 'nodejs-ASG-CFN'
+        PropagateAtLaunch: true
+      - Key: 'Costs'
+        Value: 'intern'
+        PropagateAtLaunch: true
 
-# # S3 BUCKET
+# S3 BUCKET
 
-#   nodejsS3bucket:
-#     Type: "AWS::S3::Bucket"
-#     Properties:
-#       BucketName: nodejs-awso-artefacts
-#       Tags:
-#         - Key: Costs
-#           Value: intern
+  nodejsS3bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: nodejs-awso-artefacts
+      Tags:
+        - Key: Costs
+          Value: intern
 
-# # CODE BUILD PROJECT
+# CODE BUILD PROJECT
 
-#   nodejsCodeBuild:
-#     Type: "AWS::CodeBuild::Project"
-#     Properties:
-#       Source:
-#         Type: S3
-#         Location: !Sub |
-#             ${nodejsS3bucket}/SourceOutput
-#       Name: nodejs-CodeBuild
-#       Artifacts:
-#           Location: !Ref nodejsS3bucket
-#           Name: "/"
-#           Path: BuildOutput
-#           NamespaceType: BUILD_ID
-#           Type: S3
-#       ServiceRole: !Ref "nodejsRoleForCodeBuild"
-#       Environment: 
-#         ComputeType: BUILD_GENERAL1_SMALL
-#         Image: aws/codebuild/standard:2.0
-#         Type: LINUX_CONTAINER
+  nodejsCodeBuild:
+    Type: "AWS::CodeBuild::Project"
+    Properties:
+      Source:
+        Type: S3
+        Location: !Sub |
+            ${nodejsS3bucket}/SourceOutput
+      Name: nodejs-CodeBuild
+      Artifacts:
+          Location: !Ref nodejsS3bucket
+          Name: "/"
+          Path: BuildOutput
+          NamespaceType: BUILD_ID
+          Type: S3
+      ServiceRole: !Ref "nodejsRoleForCodeBuild"
+      Environment: 
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+        Type: LINUX_CONTAINER
 
-# # CODE DEPLOY APPLICATION
+# CODE DEPLOY APPLICATION
 
-#   nodejsCodeDeployApplication:
-#     Type: "AWS::CodeDeploy::Application"
-#     Properties:
-#       ApplicationName: nodejs
-#       ComputePlatform: Server
+  nodejsCodeDeployApplication:
+    Type: "AWS::CodeDeploy::Application"
+    Properties:
+      ApplicationName: nodejs
+      ComputePlatform: Server
 
-# # CODE DEPLOY - DEPLOYMENT GROUP
+# CODE DEPLOY - DEPLOYMENT GROUP
 
-#   nodejsCodeDeployDeploymentGroup:
-#     Type: "AWS::CodeDeploy::DeploymentGroup"
-#     Properties:
-#       ApplicationName: !Ref "nodejsCodeDeployApplication"
-#       AutoScalingGroups:
-#         - Ref: "nodejsAutoScalingGroup"
-#       DeploymentGroupName: "nodejsDeploymentGroup"
-#       ServiceRoleArn: !GetAtt nodejsRoleForCodeDeploy.Arn
+  nodejsCodeDeployDeploymentGroup:
+    Type: "AWS::CodeDeploy::DeploymentGroup"
+    Properties:
+      ApplicationName: !Ref "nodejsCodeDeployApplication"
+      AutoScalingGroups:
+        - Ref: "nodejsAutoScalingGroup"
+      DeploymentGroupName: "nodejsDeploymentGroup"
+      ServiceRoleArn: !GetAtt nodejsRoleForCodeDeploy.Arn
   
-# # CODEPIPELINE
+# CODEPIPELINE
 
-#   nodejsCodepipeline:
-#     Type: "AWS::CodePipeline::Pipeline"
-#     Properties:
-#       ArtifactStore:
-#         Type: S3 
-#         Location: !Ref nodejsS3bucket
-#       Name: nodejsCodepipeline
-#       RestartExecutionOnUpdate: true
-#       RoleArn: !GetAtt nodejsRoleForCodePipeline.Arn
-#       Stages:
-#         - Name: GetSource
-#           Actions:
-#             - Name: SourceAction
-#               ActionTypeId: 
-#                 Category: Source
-#                 Owner: ThirdParty
-#                 Version: 1 
-#                 Provider: GitHub 
-#               OutputArtifacts:
-#                 - Name: SourceOutput 
-#               Region: !Ref "AWS::Region"
-#               Configuration:
-#                 Owner: !Ref "GithubUsername"
-#                 Repo: !Ref "GithubRepositoryName"
-#                 Branch: !Ref "GithubBranch"
-#                 PollForSourceChanges: true
-#                 OAuthToken: !Ref "GithubPersonalAccessToken"
-#               RunOrder: 1 
-#         - Name: Build 
-#           Actions: 
-#             - Name: BuildProject 
-#               InputArtifacts: 
-#                 - Name: SourceOutput 
-#               ActionTypeId: 
-#                 Category: Build
-#                 Owner: AWS 
-#                 Version: 1 
-#                 Provider: CodeBuild
-#               Configuration: 
-#                 ProjectName: !Ref "nodejsCodeBuild"
-#               OutputArtifacts:
-#                 - Name: BuildOutput 
-#               RunOrder: 2 
-#         - Name: Approval 
-#           Actions: 
-#             - Name: ManualApproval
-#               ActionTypeId: 
-#                 Category: Approval
-#                 Owner: AWS 
-#                 Version: 1 
-#                 Provider: Manual
-#               Configuration:
-#                 NotificationArn: !Ref SNStopicForManualApproval
-#               RunOrder: 3
-#         - Name: Deploy 
-#           Actions: 
-#             - Name: DeployProject 
-#               InputArtifacts: 
-#                 - Name: BuildOutput 
-#               ActionTypeId: 
-#                 Category: Deploy
-#                 Owner: AWS 
-#                 Version: 1 
-#                 Provider: CodeDeploy
-#               Configuration: 
-#                 ApplicationName: !Ref "nodejsCodeDeployApplication"
-#                 DeploymentGroupName: !Ref "nodejsCodeDeployDeploymentGroup"
-#               RunOrder: 4
+  nodejsCodepipeline:
+    Type: "AWS::CodePipeline::Pipeline"
+    Properties:
+      ArtifactStore:
+        Type: S3 
+        Location: !Ref nodejsS3bucket
+      Name: nodejsCodepipeline
+      RestartExecutionOnUpdate: true
+      RoleArn: !GetAtt nodejsRoleForCodePipeline.Arn
+      Stages:
+        - Name: GetSource
+          Actions:
+            - Name: SourceAction
+              ActionTypeId: 
+                Category: Source
+                Owner: ThirdParty
+                Version: 1 
+                Provider: GitHub 
+              OutputArtifacts:
+                - Name: SourceOutput 
+              Region: !Ref "AWS::Region"
+              Configuration:
+                Owner: !Ref "GithubUsername"
+                Repo: !Ref "GithubRepositoryName"
+                Branch: !Ref "GithubBranch"
+                PollForSourceChanges: true
+                OAuthToken: !Ref "GithubPersonalAccessToken"
+              RunOrder: 1 
+        - Name: Build 
+          Actions: 
+            - Name: BuildProject 
+              InputArtifacts: 
+                - Name: SourceOutput 
+              ActionTypeId: 
+                Category: Build
+                Owner: AWS 
+                Version: 1 
+                Provider: CodeBuild
+              Configuration: 
+                ProjectName: !Ref "nodejsCodeBuild"
+              OutputArtifacts:
+                - Name: BuildOutput 
+              RunOrder: 2 
+        - Name: Approval 
+          Actions: 
+            - Name: ManualApproval
+              ActionTypeId: 
+                Category: Approval
+                Owner: AWS 
+                Version: 1 
+                Provider: Manual
+              Configuration:
+                NotificationArn: !Ref SNStopicForManualApproval
+              RunOrder: 3
+        - Name: Deploy 
+          Actions: 
+            - Name: DeployProject 
+              InputArtifacts: 
+                - Name: BuildOutput 
+              ActionTypeId: 
+                Category: Deploy
+                Owner: AWS 
+                Version: 1 
+                Provider: CodeDeploy
+              Configuration: 
+                ApplicationName: !Ref "nodejsCodeDeployApplication"
+                DeploymentGroupName: !Ref "nodejsCodeDeployDeploymentGroup"
+              RunOrder: 4

@@ -1,0 +1,194 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Base stack for Alek
+
+Parameters:
+
+  Prefix:
+    Type: String
+  
+  Environment:
+    Type: String
+
+  VPCId:
+    Type: String
+
+Resources:
+
+# SECURITY GROUP FOR Backend
+
+  alekSecurityGroupForBackendLaunchConfiguration:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${Prefix}-${Environment}-for-Backend-EC2-Instance
+      GroupDescription: Allow http, ssh and port 3000
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3000
+        ToPort: 3000
+        SourceSecurityGroupId: !GetAtt alekSecurityGroupForALB.GroupId
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+    
+# SECURITY GROUP FOR authentication
+
+  alekSecurityGroupForAuthenticationLaunchConfiguration:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${Prefix}-${Environment}-for-Authentication-EC2-Instance
+      GroupDescription: Allow http, ssh and port 3000
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 3000
+        ToPort: 3000
+        SourceSecurityGroupId: !GetAtt alekSecurityGroupForALB.GroupId
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+
+# SECURITY GROUP FOR RDS instance
+
+  alekSecurityGroupForLaunchConfiguration:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${Prefix}-${Environment}-for-RDS
+      GroupDescription: Allow port 3000
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 3306
+        ToPort: 3306
+        SourceSecurityGroupId: !GetAtt alekSecurityGroupForBackendLaunchConfiguration.GroupId
+      - IpProtocol: tcp
+        FromPort: 3306
+        ToPort: 3306
+        SourceSecurityGroupId: !GetAtt alekSecurityGroupForAuthenticationLaunchConfiguration.GroupId
+      
+# SECURITY GROUP FOR APPLICATION LOAD BALANCER
+
+  alekSecurityGroupForALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${Prefix}-${Environment}-for-Alb
+      GroupDescription: Allow http and ssh
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+
+# ROLE FOR EC2
+
+  alekRoleForEC2:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      Path: /
+      RoleName: !Sub ${Prefix}-${Environment}-RoleForEC2
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# INSTANCE PROFILE FOR EC2
+
+  alekInstanceProfileForEC2:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles: [ !Ref alekRoleForEC2 ]
+
+# S3 BUCKET
+
+  alekS3bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub ${Prefix}-${Environment}-${AWS::StackName}
+      Tags:
+        - Key: Costs
+          Value: intern 
+
+  LogicalID:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      AllocatedStorage: String
+      AllowMajorVersionUpgrade: Boolean
+      AssociatedRoles:
+        - DBInstanceRole
+      AutoMinorVersionUpgrade: Boolean
+      AvailabilityZone: String
+      BackupRetentionPeriod: Integer
+      CharacterSetName: String
+      CopyTagsToSnapshot: Boolean
+      DBClusterIdentifier: String
+      DBInstanceClass: String #required
+      DBInstanceIdentifier: String
+      DBName: String
+      DBParameterGroupName: String
+      DBSecurityGroups:
+        - String
+      DBSnapshotIdentifier: String
+      DBSubnetGroupName: String
+      DeleteAutomatedBackups: Boolean
+      DeletionProtection: Boolean
+      Domain: String
+      DomainIAMRoleName: String
+      EnableCloudwatchLogsExports:
+        - String
+      EnableIAMDatabaseAuthentication: Boolean
+      EnablePerformanceInsights: Boolean
+      Engine: String
+      EngineVersion: String
+      Iops: Integer
+      KmsKeyId: String
+      LicenseModel: String
+      MasterUserPassword: String
+      MasterUsername: String
+      MonitoringInterval: Integer
+      MonitoringRoleArn: String
+      MultiAZ: Boolean
+      OptionGroupName: String
+      PerformanceInsightsKMSKeyId: String
+      PerformanceInsightsRetentionPeriod: Integer
+      Port: String
+      PreferredBackupWindow: String
+      PreferredMaintenanceWindow: String
+      ProcessorFeatures:
+        - ProcessorFeature
+      PromotionTier: Integer
+      PubliclyAccessible: Boolean
+      SourceDBInstanceIdentifier: String
+      SourceRegion: String
+      StorageEncrypted: Boolean
+      StorageType: String
+      Tags:
+        - Tag
+      Timezone: String
+      UseDefaultProcessorFeatures: Boolean
+      VPCSecurityGroups:
+        - String
+       

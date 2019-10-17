@@ -1,0 +1,7 @@
+{ 
+    "Parameters": {
+      "Prefix": "alek",
+      "Environment": "staging",
+      "VPCId": "vpc-8a2eb4e2"
+    }
+  }
