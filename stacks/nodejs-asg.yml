@@ -236,9 +236,27 @@ Resources:
                 files: 
                 - "/etc/init.d/nodejs"
 
-# AUTO SCALING GROUP - STEP SCALING~
+# CLOUD WATCH ALARM
 
-  nodejsScalingPolicyASG:
+  CPUAlarmHigh:
+    Type: "AWS::CloudWatch::Alarm"
+    Properties:
+      AlarmActions:
+        - String
+      AlarmName: !Sub ${AWS::StackName}-autoscaling-alarm
+      ComparisonOperator: GreaterThanOrEqualToThreshold #required
+      EvaluationPeriods: 2 #required
+      AlarmActions:
+        - !Ref nodejsScalingPolicyStepScaling
+      MetricName: CPUUtilization
+      Period: 60
+      Statistic: Average
+      Unit: Percent
+  
+
+# AUTO SCALING GROUP - STEP SCALING
+
+  nodejsScalingPolicyStepScaling:
     Type: "AWS::AutoScaling::ScalingPolicy"
     Properties:
       AdjustmentType: PercentChangeInCapacity
