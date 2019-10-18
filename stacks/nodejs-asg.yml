@@ -288,7 +288,7 @@ Resources:
       Period: 60
       Statistic: Average
       Unit: Percent
-      Threshold: 30
+      Threshold: 10
       Dimensions:
       - Name: AutoScalingGroupName
         Value: !Ref nodejsAutoScalingGroup
@@ -304,10 +304,9 @@ Resources:
       MetricAggregationType: Average
       PolicyType: StepScaling
       StepAdjustments:
-        - MetricIntervalLowerBound: 20
-          ScalingAdjustment: 2
         - MetricIntervalLowerBound: 10
-          MetricIntervalUpperBound: 0
+          ScalingAdjustment: 2
+          MetricIntervalUpperBound: 10
           ScalingAdjustment: 1
 
 # AUTO SCALING GROUP
