@@ -306,7 +306,7 @@ Resources:
       StepAdjustments:
         - MetricIntervalLowerBound: 10
           ScalingAdjustment: 2
-          MetricIntervalUpperBound: 20
+        - MetricIntervalUpperBound: 20
           ScalingAdjustment: 1
 
 # AUTO SCALING GROUP
