@@ -31,7 +31,7 @@ Resources:
       AllocatedStorage: "20"
       DBInstanceClass: db.t2.micro #required
       DBInstanceIdentifier: !Sub nodejs-${AWS::StackName}-db
-      DBParameterGroup: !Ref RDSDBParameterGroup
+      DBParameterGroupName: !Ref RDSDBParameterGroup
       DBName: !Ref DBName
       DBParameterGroupName: String
       DeleteAutomatedBackups: true
