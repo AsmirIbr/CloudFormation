@@ -28,7 +28,7 @@ Resources:
       DeleteAutomatedBackups: true
       DeletionProtection: false
       Engine: MySQL
-      EngineVersion: "MySQL 5.7.22"
+      EngineVersion: "5.7.22"
       MasterUserPassword: !Ref DBMasterUserPassword
       MasterUsername: !Ref DBMasterUsername
       Port: "3306"
