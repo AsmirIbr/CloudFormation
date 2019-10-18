@@ -64,14 +64,14 @@ Outputs:
   nodejsSecurityGroupForLaunchConfiguration:
     Value: !Ref nodejsSecurityGroupForLaunchConfiguration
     Export:
-      Name: !Sub base-nodejsSecurityGroupForLaunchConfiguration
+      Name: base-nodejsSecurityGroupForLaunchConfiguration
 
   nodejsSecurityGroupForALB:
     Value: !Ref nodejsSecurityGroupForALB
     Export:
-      Name: !Sub base-nodejsSecurityGroupForALB
+      Name: base-nodejsSecurityGroupForALB
 
   nodejsSecurityGroupForRDS:
     Value: !Ref nodejsSecurityGroupForRDS
     Export:
-      Name: !Sub base-nodejsSecurityGroupForRDS
+      Name: base-nodejsSecurityGroupForRDS
