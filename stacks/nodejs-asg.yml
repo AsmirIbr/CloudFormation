@@ -253,7 +253,7 @@ Resources:
       Unit: Percent
       Threshold: 60
       Dimensions:
-      - Name: nodejsAutoScalingGroup
+      - Name: AutoScalingGroupName
         Value: !Ref nodejsAutoScalingGroup
       
   
