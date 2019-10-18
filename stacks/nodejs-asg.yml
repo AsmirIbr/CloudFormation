@@ -295,6 +295,7 @@ Resources:
 
 # AUTO SCALING GROUP - STEP SCALING LOW
 
+
   nodejsScalingPolicyStepScalingLow:
     Type: "AWS::AutoScaling::ScalingPolicy"
     Properties:
