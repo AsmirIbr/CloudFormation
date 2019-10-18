@@ -247,8 +247,9 @@ Resources:
       Namespace: AWS/EC2
       AlarmActions:
         - !Ref nodejsScalingPolicyStepScaling
+        - Fn::ImportValue: base-SNStopicForManualApproval
       MetricName: CPUUtilization
-      Period: 60
+      Period: 30
       Statistic: Average
       Unit: Percent
       Threshold: 10
