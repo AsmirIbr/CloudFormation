@@ -243,7 +243,7 @@ Resources:
     Properties:
       AlarmName: !Sub ${AWS::StackName}-autoscaling-alarm
       ComparisonOperator: GreaterThanOrEqualToThreshold #required
-      EvaluationPeriods: 2 #required
+      EvaluationPeriods: 1 #required
       Namespace: AWS/EC2
       AlarmActions:
         - !Ref nodejsScalingPolicyStepScaling
