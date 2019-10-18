@@ -30,27 +30,18 @@ Resources:
       MasterUserPassword: !Ref DBMasterUserPassword
       MasterUsername: !Ref DBMasterUsername
       Port: "3306"
-      PreferredBackupWindow: String
-      PreferredMaintenanceWindow: String
-      ProcessorFeatures:
-        - ProcessorFeature
-      PromotionTier: Integer
-      PubliclyAccessible: Boolean
-      SourceDBInstanceIdentifier: String
-      SourceRegion: String
-      StorageEncrypted: Boolean
-      StorageType: String
+      PubliclyAccessible: false
       Tags:
-        - Tag
-      Timezone: String
-      UseDefaultProcessorFeatures: Boolean
+        - Key: Costs
+          Value: intern
       VPCSecurityGroups:
-        - String
+        - Fn::ImportValue: base-nodejsSecurityGroupForRDS
+
   
         
 Outputs:
 
-  nodejsAutoScalingGroup:
-    Value: !Ref nodejsAutoScalingGroup
+  nodejsRDS:
+    Value: !Ref nodejsRDS
     Export:
-      Name: infrastructure-nodejsAutoScalingGroup
+      Name: infrastructure-nodejsRDS
