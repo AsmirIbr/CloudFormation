@@ -48,4 +48,5 @@ Resources:
         DBName: !Ref DBName
         DBMasterUserPassword: !Ref DBMasterUserPassword
         DBMasterUsername: !Ref DBMasterUsername
+        SecurityGroup: !Ref nodejsSecurityGroups.Outputs.nodejsSecurityGroupForRDS
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-rds.yml"
