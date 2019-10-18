@@ -305,9 +305,9 @@ Resources:
       PolicyType: StepScaling
       StepAdjustments:
         - MetricIntervalLowerBound: -10
+          MetricIntervalUpperBound: -20
           ScalingAdjustment: 2
-        - MetricIntervalUpperBound: -20
-          MetricIntervalLowerBound: 0
+        - MetricIntervalLowerBound: -20
           ScalingAdjustment: 1
 
 # AUTO SCALING GROUP
