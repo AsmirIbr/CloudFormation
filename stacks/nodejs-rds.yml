@@ -17,6 +17,14 @@ Parameters:
 
 Resources:
 
+  RDSDBParameterGroup: 
+    Properties: 
+      Description: "CloudFormation Sample Parameter Group"
+      Family: mysql5.7
+      Parameters: 
+        sql_mode: IGNORE_SPACE
+    Type: "AWS::RDS::DBParameterGroup"
+
   nodejsRDS:
     Type: "AWS::RDS::DBInstance"
     Properties:
