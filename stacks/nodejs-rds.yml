@@ -13,7 +13,7 @@ Parameters:
     Type: String
 
   SecurityGroup:
-      Type: String
+    Type: String
 
 Resources:
 
@@ -25,7 +25,7 @@ Resources:
       DBName: !Ref DBName
       DBParameterGroupName: String
       DBSecurityGroups:
-        - Fn::ImportValue: nodejsSecurityGroupForRDS
+        - Ref: SecurityGroup
       DeleteAutomatedBackups: true
       DeletionProtection: false
       Engine: MySQL
@@ -37,8 +37,6 @@ Resources:
       Tags:
         - Key: Costs
           Value: intern
-      VPCSecurityGroups:
-        - !Ref SecurityGroup
 
   
         
