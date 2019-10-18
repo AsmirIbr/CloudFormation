@@ -269,8 +269,8 @@ Resources:
       MetricAggregationType: Average
       PolicyType: StepScaling
       StepAdjustments:
-        - MetricIntervalLowerBound: 0
-          MetricIntervalUpperBound: 60
+        - MetricIntervalLowerBound: 60
+          MetricIntervalUpperBound: 70
           ScalingAdjustment: 1
         - MetricIntervalLowerBound: 70
           ScalingAdjustment: 2
