@@ -241,11 +241,10 @@ Resources:
   CPUAlarmHigh:
     Type: "AWS::CloudWatch::Alarm"
     Properties:
-      AlarmActions:
-        - String
       AlarmName: !Sub ${AWS::StackName}-autoscaling-alarm
       ComparisonOperator: GreaterThanOrEqualToThreshold #required
       EvaluationPeriods: 2 #required
+      Namespace: AWS/EC2
       AlarmActions:
         - !Ref nodejsScalingPolicyStepScaling
       MetricName: CPUUtilization
