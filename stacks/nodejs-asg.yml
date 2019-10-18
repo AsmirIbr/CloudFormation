@@ -249,6 +249,7 @@ Resources:
       Period: 60
       Statistic: Average
       Unit: Percent
+      Threshold: 60
       Dimensions:
         - Name: nodejsScalingPolicyStepScaling
           Value: !Ref nodejsScalingPolicyStepScaling
