@@ -272,7 +272,7 @@ Resources:
         - MetricIntervalLowerBound: 0
           MetricIntervalUpperBound: 60
           ScalingAdjustment: 1
-        - MetricIntervalLowerBound: 60
+        - MetricIntervalLowerBound: 70
           ScalingAdjustment: 2
 
 # AUTO SCALING GROUP
