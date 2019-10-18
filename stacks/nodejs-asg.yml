@@ -245,14 +245,17 @@ Resources:
       ComparisonOperator: GreaterThanOrEqualToThreshold #required
       EvaluationPeriods: 2 #required
       Namespace: AWS/EC2
+      AlarmActions:
+        - !Ref nodejsScalingPolicyStepScaling
       MetricName: CPUUtilization
       Period: 60
       Statistic: Average
       Unit: Percent
       Threshold: 60
       Dimensions:
-        - Name: nodejsScalingPolicyStepScaling
-          Value: !Ref nodejsScalingPolicyStepScaling
+      - Name: nodejsAutoScalingGroup
+        Value: !Ref nodejsAutoScalingGroup
+      
   
 
 # AUTO SCALING GROUP - STEP SCALING
