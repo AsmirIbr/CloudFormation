@@ -255,8 +255,6 @@ Resources:
       Dimensions:
       - Name: AutoScalingGroupName
         Value: !Ref nodejsAutoScalingGroup
-      
-  
 
 # AUTO SCALING GROUP - STEP SCALING
 
