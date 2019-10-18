@@ -251,7 +251,7 @@ Resources:
       Period: 60
       Statistic: Average
       Unit: Percent
-      Threshold: 60
+      Threshold: 10
       Dimensions:
       - Name: AutoScalingGroupName
         Value: !Ref nodejsAutoScalingGroup
@@ -265,7 +265,7 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref nodejsAutoScalingGroup #required
-      EstimatedInstanceWarmup: 120
+      EstimatedInstanceWarmup: 60
       MetricAggregationType: Average
       PolicyType: StepScaling
       StepAdjustments:
