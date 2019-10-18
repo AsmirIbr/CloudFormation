@@ -4,7 +4,7 @@ Description: Security groups for nodeJS
 Parameters:
 
   DBName:
-    Type: AWS::EC2::Image::Id
+    Type: String
 
   DBMasterUserPassword:
     Type: String
