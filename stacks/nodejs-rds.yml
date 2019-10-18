@@ -33,6 +33,7 @@ Resources:
       MasterUsername: !Ref DBMasterUsername
       Port: "3306"
       PubliclyAccessible: false
+      SourceRegion: !Ref AWS::Region
       Tags:
         - Key: Costs
           Value: intern
