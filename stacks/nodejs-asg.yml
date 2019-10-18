@@ -304,11 +304,11 @@ Resources:
       MetricAggregationType: Average
       PolicyType: StepScaling
       StepAdjustments:
-        - MetricIntervalLowerBound: 0
-          MetricIntervalUpperBound: -10
-          ScalingAdjustment: 1
-        - MetricIntervalLowerBound: -10
+        - MetricIntervalLowerBound: 20
           ScalingAdjustment: 2
+        - MetricIntervalLowerBound: 10
+          MetricIntervalUpperBound: 0
+          ScalingAdjustment: 1
 
 # AUTO SCALING GROUP
 
