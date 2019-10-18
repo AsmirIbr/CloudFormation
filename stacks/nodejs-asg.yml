@@ -273,7 +273,6 @@ Resources:
         - MetricIntervalLowerBound: 10
           ScalingAdjustment: 2
 
-
 # CLOUD WATCH ALARM
 
   CPUAlarmLow:
@@ -284,7 +283,7 @@ Resources:
       EvaluationPeriods: 1 #required
       Namespace: AWS/EC2
       AlarmActions:
-        - !Ref nodejsScalingPolicyStepScaling
+        - !Ref nodejsScalingPolicyStepScalingLow
       MetricName: CPUUtilization
       Period: 60
       Statistic: Average
