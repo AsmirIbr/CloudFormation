@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+  DBName:
+    Type: AWS::EC2::Image::Id
+
+  DBMasterUserPassword:
+    Type: String
+
+  DBMasterUsername:
+    Type: String
+
+Resources:
+
+  nodejsRDS:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      DBInstanceClass: db.t2.micro #required
+      DBInstanceIdentifier: !Sub nodejs-${AWS::StackName}-db
+      DBName: !Ref DBName
+      DBParameterGroupName: String
+      DBSecurityGroups:
+        - Fn::ImportValue: nodejsSecurityGroupForRDS
+      DeleteAutomatedBackups: true
+      DeletionProtection: false
+      Engine: MySQL
+      EngineVersion: "MySQL 5.7.22"
+      MasterUserPassword: !Ref DBMasterUserPassword
+      MasterUsername: !Ref DBMasterUsername
+      Port: "3306"
+      PreferredBackupWindow: String
+      PreferredMaintenanceWindow: String
+      ProcessorFeatures:
+        - ProcessorFeature
+      PromotionTier: Integer
+      PubliclyAccessible: Boolean
+      SourceDBInstanceIdentifier: String
+      SourceRegion: String
+      StorageEncrypted: Boolean
+      StorageType: String
+      Tags:
+        - Tag
+      Timezone: String
+      UseDefaultProcessorFeatures: Boolean
+      VPCSecurityGroups:
+        - String
+  
+        
+Outputs:
+
+  nodejsAutoScalingGroup:
+    Value: !Ref nodejsAutoScalingGroup
+    Export:
+      Name: infrastructure-nodejsAutoScalingGroup

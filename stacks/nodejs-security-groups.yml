@@ -8,7 +8,20 @@ Parameters:
     
 Resources:
 
-  # SECURITY GROUP FOR INSTANCE
+# SECURITY GROUP FOR INSTANCE
+
+  nodejsSecurityGroupForRDS:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http, ssh and port 3000
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 3306
+        ToPort: 3306
+        SourceSecurityGroupId: !GetAtt nodejsSecurityGroupForLaunchConfiguration.GroupId
+
+# SECURITY GROUP FOR INSTANCE
 
   nodejsSecurityGroupForLaunchConfiguration:
     Type: AWS::EC2::SecurityGroup
@@ -57,3 +70,8 @@ Outputs:
     Value: !Ref nodejsSecurityGroupForALB
     Export:
       Name: !Sub base-nodejsSecurityGroupForALB
+
+  nodejsSecurityGroupForRDS:
+    Value: !Ref nodejsSecurityGroupForRDS
+    Export:
+      Name: !Sub base-nodejsSecurityGroupForRDS
