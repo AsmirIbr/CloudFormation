@@ -12,9 +12,6 @@ Parameters:
   DBMasterUsername:
     Type: String
 
-  SecurityGroup:
-      Type: String
-
 Resources:
 
   nodejsRDS:
@@ -38,7 +35,7 @@ Resources:
         - Key: Costs
           Value: intern
       VPCSecurityGroups:
-        - !Ref SecurityGroup
+        - !Ref nodejsSecurityGroups.Outputs.nodejsSecurityGroupForRDS
 
   
         
