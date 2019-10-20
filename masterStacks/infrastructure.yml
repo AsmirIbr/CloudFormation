@@ -22,20 +22,20 @@ Parameters:
   Subnets:
     Type: CommaDelimitedList
 
-  # GithubUsername:
-  #   Type: String
+  GithubUsername:
+    Type: String
 
-  # GithubPersonalAccessToken:
-  #   Type: String
+  GithubPersonalAccessToken:
+    Type: String
 
-  # GithubRepositoryName:
-  #   Type: String
+  GithubRepositoryName:
+    Type: String
 
-  # GithubBranch:
-  #   Type: String
+  GithubBranch:
+    Type: String
 
-  # nodejsS3:
-  #   Type: String
+  nodejsS3:
+    Type: String
 
 Resources:
 
@@ -58,14 +58,14 @@ Resources:
         KeyName: !Ref KeyName
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-asg.yml" #required
   
-  # nodejsPipeline:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     Parameters:
-  #       GithubUsername: !Ref GithubUsername 
-  #       GithubPersonalAccessToken: !Ref GithubPersonalAccessToken 
-  #       GithubRepositoryName: !Ref GithubRepositoryName 
-  #       GithubBranch: !Ref GithubBranch 
-  #       nodejsS3: !Ref nodejsS3 
-  #     TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-codepipeline.yml" #required
+  nodejsPipeline:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        GithubUsername: !Ref GithubUsername 
+        GithubPersonalAccessToken: !Ref GithubPersonalAccessToken 
+        GithubRepositoryName: !Ref GithubRepositoryName 
+        GithubBranch: !Ref GithubBranch 
+        nodejsS3: !Ref nodejsS3 
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-codepipeline.yml" #required
   
