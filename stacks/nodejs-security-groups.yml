@@ -15,7 +15,7 @@ Resources:
     Properties:
       GroupDescription: Allow port 3306
       VpcId: !Ref VPCId
-      DBSecurityGroupIngress:
+      SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 3306
         ToPort: 3306
