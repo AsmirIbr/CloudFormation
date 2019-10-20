@@ -8,15 +8,18 @@ Parameters:
     
 Resources:
 
-# SECURITY GROUP FOR INSTANCE
+# SECURITY GROUP FOR RDS INSTANCE
 
   nodejsSecurityGroupForRDS:
-    Type: AWS::RDS::SecurityGroup
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow http, ssh and port 3000
+      GroupDescription: Allow port 3306
       EC2VpcId: !Ref VPCId
       DBSecurityGroupIngress:
-      - EC2SecurityGroupId: !GetAtt nodejsSecurityGroupForLaunchConfiguration.GroupId
+      - IpProtocol: tcp
+        FromPort: 3306
+        ToPort: 3306
+        EC2SecurityGroupId: !GetAtt nodejsSecurityGroupForLaunchConfiguration.GroupId
 
 # SECURITY GROUP FOR INSTANCE
 
