@@ -14,7 +14,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow port 3306
-      EC2VpcId: !Ref VPCId
+      VpcId: !Ref VPCId
       DBSecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 3306
