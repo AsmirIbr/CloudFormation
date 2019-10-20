@@ -37,6 +37,9 @@ Parameters:
   nodejsS3:
     Type: String
 
+  Evnironment:
+    Type: String
+
 Resources:
 
   nodejsALB:
@@ -56,6 +59,7 @@ Resources:
         ImageId: !Ref ImageId
         InstanceType: !Ref InstanceType
         KeyName: !Ref KeyName
+        Evnironment: !Ref Evnironment
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-asg.yml" #required
   
   nodejsPipeline:
