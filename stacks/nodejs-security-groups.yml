@@ -19,7 +19,7 @@ Resources:
       - IpProtocol: tcp
         FromPort: 3306
         ToPort: 3306
-        EC2SecurityGroupId: !GetAtt nodejsSecurityGroupForLaunchConfiguration.GroupId
+        SourceSecurityGroupId: !GetAtt nodejsSecurityGroupForLaunchConfiguration.GroupId
 
 # SECURITY GROUP FOR INSTANCE
 
