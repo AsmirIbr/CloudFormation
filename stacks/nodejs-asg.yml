@@ -386,14 +386,12 @@ Resources:
       - Key: 'Costs'
         Value: 'intern'
         PropagateAtLaunch: true
-      - Key: 'Description'
-        Value: "{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw:SecretString:password:AWSCURRENT}}"
-        PropagateAtLaunch: true
   
         
 Outputs:
 
   nodejsAutoScalingGroup:
     Value: !Ref nodejsAutoScalingGroup
+    Description: '{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw:SecretString:password:AWSCURRENT}}'
     Export:
       Name: infrastructure-nodejsAutoScalingGroup
