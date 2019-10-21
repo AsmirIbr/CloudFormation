@@ -255,6 +255,7 @@ Resources:
                   },
                   "production": {
                     "username": "asmirwordpress",
+                    "password": !Ref SecretPass,
                     "database": "Lottery",
                     "host": "nodejs-awso-base-nodejscreatedb-1b2cradanarlq-db.cuwpfmacplol.eu-west-2.rds.amazonaws.com",
                     "port": 3306,
