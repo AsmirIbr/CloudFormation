@@ -48,11 +48,11 @@ Resources:
           wget https://aws-codedeploy-eu-west-2.s3.eu-west-2.amazonaws.com/latest/install
           chmod +x ./install
           sudo ./install auto
+          # JQ
+          yum install jq -y
           # CFN-INIT
           yum install -y aws-cfn-bootstrap
           /opt/aws/bin/cfn-init --region ${AWS::Region} --stack ${AWS::StackName} --resource nodejsLaunchConfiguration
-          # JQ
-          yum install jq
     Metadata:
       AWS::CloudFormation::Init: 
         config:
@@ -303,45 +303,6 @@ Resources:
           ScalingAdjustment: 1
         - MetricIntervalLowerBound: 10
           ScalingAdjustment: 2
-
-# # CLOUD WATCH ALARM
-
-#   CPUAlarmLow:
-#     Type: "AWS::CloudWatch::Alarm"
-#     Properties:
-#       AlarmName: !Sub ${AWS::StackName}-autoscaling-alarm-low
-#       ComparisonOperator: LessThanOrEqualToThreshold #required
-#       EvaluationPeriods: 1 #required
-#       Namespace: AWS/EC2
-#       AlarmActions:
-#         - !Ref nodejsScalingPolicyStepScalingLow
-#       MetricName: CPUUtilization
-#       Period: 60
-#       Statistic: Average
-#       Unit: Percent
-#       Threshold: 40
-#       Dimensions:
-#       - Name: AutoScalingGroupName
-#         Value: !Ref nodejsAutoScalingGroup
-
-# # AUTO SCALING GROUP - STEP SCALING LOW
-
-
-#   nodejsScalingPolicyStepScalingLow:
-#     Type: "AWS::AutoScaling::ScalingPolicy"
-#     Properties:
-#       AdjustmentType: ChangeInCapacity
-#       AutoScalingGroupName: !Ref nodejsAutoScalingGroup #required
-#       EstimatedInstanceWarmup: 60
-#       MetricAggregationType: Average
-#       PolicyType: StepScaling
-#       StepAdjustments:
-#         - MetricIntervalLowerBound: -20
-#           MetricIntervalUpperBound: -10
-#           ScalingAdjustment: 2
-#         - MetricIntervalUpperBound: -10
-#           MetricIntervalLowerBound: 0
-#           ScalingAdjustment: 1
 
 # AUTO SCALING GROUP
 
