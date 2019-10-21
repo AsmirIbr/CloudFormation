@@ -60,6 +60,7 @@ Resources:
         InstanceType: !Ref InstanceType
         KeyName: !Ref KeyName
         Evnironment: !Ref Evnironment
+        Secret: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:eu-west-2:743584032881:secret:MySecretForAppB-sAgU4S', ':SecretString:username}}' ]]
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-asg.yml" #required
   
   nodejsPipeline:

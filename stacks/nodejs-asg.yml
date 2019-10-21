@@ -19,6 +19,9 @@ Parameters:
   Evnironment:
     Type: String
 
+  Secret:
+    Type: String
+
 Resources:
 
   MySecretB:
@@ -288,9 +291,9 @@ Resources:
               content: !Sub |
                 {
                   "production": {
-                    "username": {"Fn::Join": ["", ["{{resolve:secretsmanager:",{"Ref": "MySecretB"},":SecretString:username}}"] ] },
+                    "username": "",
                     "password": "",
-                    "database": "",
+                    "database": '${Secret}',
                     "host": "",
                     "port": "",
                     "dialect": "",
