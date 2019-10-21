@@ -235,7 +235,8 @@ Resources:
                     "password": "",
                     "database": "",
                     "host": "",
-                    "dialect": "mysql",
+                    "port": "",
+                    "dialect": "",
                     "operatorsAliases": false,
                     "pool": {
                       "max": 5,
