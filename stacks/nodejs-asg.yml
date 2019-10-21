@@ -60,7 +60,7 @@ Resources:
       ImageId: !Ref ImageId
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
-      LaunchConfigurationName: awso-nodejsLaunchConfiguration1
+      LaunchConfigurationName: !Join ['', ['{{resolve:secretsmanager:', !Ref MySecretB, ':SecretString:username}}' ]]
       IamInstanceProfile: 
         Fn::ImportValue: base-nodejsInstanceProfileForEC2
       SecurityGroups: 
