@@ -284,6 +284,31 @@ Resources:
               mode: '000766'
               owner: root
               group: root
+            '/var/dbConfig/test.json':
+              content: !Sub |
+                {
+                  "production": {
+                    "username": !Join ['', ['{{resolve:secretsmanager:', !Ref MySecretB, ':SecretString:username}}' ]],
+                    "password": "",
+                    "database": "",
+                    "host": "",
+                    "port": "",
+                    "dialect": "",
+                    "operatorsAliases": false,
+                    "pool": {
+                      "max": 5,
+                      "min": 0,
+                      "acquire": 10000,
+                      "idle": 10000
+                    },
+                    "define": {
+                      "paranoid": true
+                    }
+                  }
+                }
+              mode: '000766'
+              owner: root
+              group: root
           services: 
             sysvinit:
               cfn-hup:
