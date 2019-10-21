@@ -21,7 +21,7 @@ Parameters:
 
 Resources:
 
-   MySecretB:
+  MySecretB:
     Type: 'AWS::SecretsManager::Secret'
     Properties:
       Name: MySecretForAppB
