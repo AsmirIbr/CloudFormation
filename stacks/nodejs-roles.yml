@@ -57,6 +57,7 @@ Resources:
       Description: "Allows CodeBuild to call AWS services on your behalf."
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
       Path: /
       RoleName: nodejsRoleForCodeBuild
       Policies:
