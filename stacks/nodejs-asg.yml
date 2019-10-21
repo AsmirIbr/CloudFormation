@@ -30,7 +30,7 @@ Resources:
       ImageId: !Ref ImageId
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
-      LaunchConfigurationName: awso-nodejsLaunchConfiguration
+      LaunchConfigurationName: awso-nodejsLaunchConfiguration1
       IamInstanceProfile: 
         Fn::ImportValue: base-nodejsInstanceProfileForEC2
       SecurityGroups: 
