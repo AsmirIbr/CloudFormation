@@ -230,32 +230,11 @@ Resources:
             '/var/dbConfig/mysql.json':
               content: !Sub |
                 {
-                  "dev": {
-                    "username": "asmirwordpress",
-                    "password": "asmirwordpress",
-                    "database": "Lottery",
-                    "host": "asmirwordpress.cuwpfmacplol.eu-west-2.rds.amazonaws.com",
-                    "port": 3306,
-                    "dialect": "mysql",
-                    "operatorsAliases": false,
-                    "pool": {
-                      "max": 5,
-                      "min": 0,
-                      "acquire": 10000,
-                      "idle": 10000
-                    },
-                  "define": {
-                    "paranoid": true
-                  }
-                  },
-                  "staging": {
-                  },
                   "production": {
-                    "username": "asmirwordpress",
-                    "password": "asmirwordpress",
-                    "database": "Lottery",
-                    "host": "nodejs-awso-base-nodejscreatedb-1b2cradanarlq-db.cuwpfmacplol.eu-west-2.rds.amazonaws.com",
-                    "port": 3306,
+                    "username": "",
+                    "password": "",
+                    "database": "",
+                    "host": "",
                     "dialect": "mysql",
                     "operatorsAliases": false,
                     "pool": {
