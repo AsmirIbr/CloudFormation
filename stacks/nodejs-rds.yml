@@ -54,5 +54,6 @@ Outputs:
 
   nodejsRDS:
     Value: !Ref nodejsRDS
+    Description: '{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw:SecretString:password:AWSCURRENT}}'
     Export:
       Name: infrastructure-nodejsRDS
