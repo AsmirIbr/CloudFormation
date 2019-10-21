@@ -263,7 +263,7 @@ Resources:
               content: !Sub |
                 {
                   "production": {
-                    "username": !Join ['', ['{{resolve:secretsmanager:', !Ref MySecretB, ':SecretString:username}}' ]],
+                    "username": "",
                     "password": "",
                     "database": "",
                     "host": "",
