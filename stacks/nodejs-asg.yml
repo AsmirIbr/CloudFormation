@@ -392,6 +392,6 @@ Outputs:
 
   nodejsAutoScalingGroup:
     Value: !Ref nodejsAutoScalingGroup
-    Description: '{{resolve:secretsmanager:dbConnection-DwbMbw:SecretString:password:AWSCURRENT}}'
+    Description: "{{resolve:secretsmanager:dbConnection-DwbMbw:SecretString:password:AWSCURRENT}}""
     Export:
       Name: infrastructure-nodejsAutoScalingGroup
