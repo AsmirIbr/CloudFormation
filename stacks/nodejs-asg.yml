@@ -19,6 +19,9 @@ Parameters:
   Evnironment:
     Type: String
 
+  SecretPass:
+    Type: String
+
 Resources:
 
 #AUTO SCALING GROUP - LAUNCH CONFIGURATION
@@ -252,7 +255,7 @@ Resources:
                   },
                   "production": {
                     "username": "asmirwordpress",
-                    "password": ${"{{resolve:secretsmanager:arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw:SecretString:password}}"},
+                    "password": !Ref "SecretPass",
                     "database": "Lottery",
                     "host": "nodejs-awso-base-nodejscreatedb-1b2cradanarlq-db.cuwpfmacplol.eu-west-2.rds.amazonaws.com",
                     "port": 3306,
