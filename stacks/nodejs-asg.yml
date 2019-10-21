@@ -249,7 +249,7 @@ Resources:
                     }
                   }
                 }
-              mode: '000444'
+              mode: '000766'
               owner: root
               group: root
           services: 
