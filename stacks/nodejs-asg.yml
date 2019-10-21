@@ -288,7 +288,7 @@ Resources:
               content: !Sub |
                 {
                   "production": {
-                    "username": !Join ['', ['{{resolve:secretsmanager:', !Ref MySecretB, ':SecretString:username}}' ]],
+                    "username": {"Fn::Join": ["", ["{{resolve:secretsmanager:",{"Ref": "MySecretB"},":SecretString:username}}"] ] },
                     "password": "",
                     "database": "",
                     "host": "",
