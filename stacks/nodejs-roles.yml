@@ -108,6 +108,7 @@ Resources:
         - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
         - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
       Path: /
       RoleName: nodejsRoleForCodeDeploy
       Policies:
