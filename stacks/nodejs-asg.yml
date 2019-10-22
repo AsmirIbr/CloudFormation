@@ -281,12 +281,12 @@ Resources:
               content: !Sub |
                 {
                   "production": {
-                    "username": "'${UsernameDB}'",
-                    "password": "'${PasswordDB}'",
-                    "database": "'${NameDB}'",
-                    "host": "'${HostDB}'",
-                    "port": "'${PortDB}'",
-                    "dialect": "'${DialectDB}'",
+                    "username": "${UsernameDB}",
+                    "password": "${PasswordDB}",
+                    "database": "${NameDB}",
+                    "host": "${HostDB}",
+                    "port": "${PortDB}",
+                    "dialect": "${DialectDB}",
                     "operatorsAliases": false,
                     "pool": {
                       "max": 5,
