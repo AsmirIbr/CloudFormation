@@ -44,7 +44,7 @@ Resources:
         Subnet2: !Select [ 1, !Ref Subnets ] 
         Subnet3: !Select [ 2, !Ref Subnets ] 
         VPCId: !Ref VPCId
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-alb.yml" #required
+      TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-alb.yml" #required
     
   nodejsASG:
     Type: AWS::CloudFormation::Stack
@@ -60,7 +60,7 @@ Resources:
         HostDB: !ImportValue 'awso-production-nodejsRDSendpoint'
         PortDB: !ImportValue 'awso-production-nodejsRDSport'
         DialectDB: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-secretsRDS', ':SecretString:engine}}' ]]
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-asg.yml" #required
+      TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-asg.yml" #required
   
   nodejsPipeline:
     Type: AWS::CloudFormation::Stack
@@ -72,5 +72,5 @@ Resources:
         GithubBranch: !Ref GithubBranch 
         nodejsS3: !ImportValue awso-production-nodejsS3bucket 
         autoscaling: !GetAtt nodejsASG.Outputs.nodejsAutoScalingGroup
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-codepipeline.yml" #required
+      TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-codepipeline.yml" #required
   
