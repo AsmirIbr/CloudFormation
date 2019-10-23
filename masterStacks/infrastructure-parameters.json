@@ -6,10 +6,8 @@
     "VPCId": "vpc-8a2eb4e2",
     "Subnets": "subnet-09ff0145, subnet-a02088da, subnet-c5deb2ac",
     "GithubUsername": "AsmirIbr",
-    "GithubPersonalAccessToken": "08094824cf208822eaf3a3f1a5d392e978eb55be",
     "GithubRepositoryName": "IntertecTesting",
     "GithubBranch": "master",
-    "nodejsS3": "nodejs-awso-artefacts",
     "Evnironment": "production"
   }
 }

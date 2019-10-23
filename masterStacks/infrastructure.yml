@@ -25,16 +25,10 @@ Parameters:
   GithubUsername:
     Type: String
 
-  GithubPersonalAccessToken:
-    Type: String
-
   GithubRepositoryName:
     Type: String
 
   GithubBranch:
-    Type: String
-
-  nodejsS3:
     Type: String
 
   Evnironment:
@@ -61,22 +55,21 @@ Resources:
         KeyName: !Ref KeyName
         Evnironment: !Ref Evnironment
         TargetGroup: !GetAtt nodejsALB.Outputs.nodejsTargetGroup
-        UsernameDB: !ImportValue 'awso-production-nodejsRDSendpoint'
-        PasswordDB: !Join ['', ['{{resolve:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:password}}' ]]
-        NameDB: !Join ['', ['{{resolve:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:dbname}}' ]]
+        UsernameDB: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-secretsRDS', ':SecretString:username}}' ]]
+        PasswordDB: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-secretsRDS', ':SecretString:password}}' ]]
         HostDB: !ImportValue 'awso-production-nodejsRDSendpoint'
-        PortDB: !Join ['', ['{{resolve:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:port}}' ]]
-        DialectDB: !Join ['', ['{{resolve:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:engine}}' ]]
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-asg.yml" #required
+        PortDB: !ImportValue 'awso-production-nodejsRDSport'
+        DialectDB: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-secretsRDS', ':SecretString:engine}}' ]]
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-asg.yml" #required
   
   nodejsPipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
         GithubUsername: !Ref GithubUsername 
-        GithubPersonalAccessToken: !Ref GithubPersonalAccessToken 
+        GithubPersonalAccessToken: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-MySecretB', ':SecretString:token}}' ]] 
         GithubRepositoryName: !Ref GithubRepositoryName 
         GithubBranch: !Ref GithubBranch 
-        nodejsS3: !Ref nodejsS3 
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-codepipeline.yml" #required
+        nodejsS3: !ImportValue awso-production-nodejsS3bucket 
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-codepipeline.yml" #required
   

@@ -310,6 +310,11 @@ Resources:
 
 Outputs:
 
+  MySecretB:
+    Value: !Ref MySecretB
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-MySecretB
+
   nodejsInstanceProfileForEC2:
     Value: !Ref nodejsInstanceProfileForEC2
     Export:
