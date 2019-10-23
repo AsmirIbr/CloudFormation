@@ -268,7 +268,7 @@ Resources:
                 Version: 1 
                 Provider: Manual
               RunOrder: 3
-        - Name: Deploy 
+        - Name: Deploy1
           Actions: 
             - Name: Depoloy-master
               ActionTypeId: 
