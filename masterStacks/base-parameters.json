@@ -1,9 +1,0 @@
-{ 
-    "Parameters": {
-      "VPCId": "vpc-8a2eb4e2",
-      "nodejsS3": "nodejs-awso-artefacts",
-      "DBName": "Lottery",
-      "DBMasterUserPassword": "asmirwordpress",
-      "DBMasterUsername": "asmirwordpress"
-    }
-  }

@@ -60,12 +60,12 @@ Resources:
         InstanceType: !Ref InstanceType
         KeyName: !Ref KeyName
         Evnironment: !Ref Evnironment
-        UsernameDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw', ':SecretString:username}}' ]]
-        PasswordDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw', ':SecretString:password}}' ]]
-        NameDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw', ':SecretString:dbname}}' ]]
-        HostDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw', ':SecretString:host}}' ]]
+        UsernameDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:username}}' ]]
+        PasswordDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:password}}' ]]
+        NameDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:dbname}}' ]]
+        HostDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:host}}' ]]
         PortDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:port}}' ]]
-        DialectDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:eu-west-2:743584032881:secret:dbConnection-DwbMbw', ':SecretString:engine}}' ]]
+        DialectDB: !Join ['', ['{{resolve:secretsmanager:', 'arn:aws:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId', ':secret:dbConnection-DwbMbw', ':SecretString:engine}}' ]]
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-asg.yml" #required
   
   nodejsPipeline:

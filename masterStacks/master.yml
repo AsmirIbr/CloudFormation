@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+  Prefix: 
+    Type: String
+
+  Environment:
+    Type: String
+    
+  EmailSNS:
+    Type: String
+
+  VPCId:
+    Type: String
+
+  DBName:
+    Type: String
+
+  DBMasterUsername:
+    Type: String
+
+Resources:
+
+  nodejsCreateSNSandRDSinstance:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        Prefix: !Ref Prefix
+        Environment: !Ref Environment
+        EmailSNS: !Ref EmailSNS
+        DBName: !Ref DBName
+        DBMasterUserPassword: !Ref DBMasterUserPassword
+        DBMasterUsername: !Ref DBMasterUsername
+        SecurityGroupRDS: !GetAtt nodejsSecurityGroups.Outputs.nodejsSecurityGroupForRDS
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-RDS-and-SNS.yml"
+
+  nodejsSecurityGroups:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        Prefix: !Ref Prefix
+        Environment: !Ref Environment
+        VPCId: !Ref VPCId
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-security-groups.yml" #required

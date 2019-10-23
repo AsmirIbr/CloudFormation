@@ -3,6 +3,12 @@ Description: Security groups for nodeJS
 
 Parameters:
 
+  Prefix: 
+    Type: String
+
+  Environment:
+    Type: String
+
   VPCId:
     Type: String
     
@@ -64,7 +70,7 @@ Outputs:
   nodejsSecurityGroupForLaunchConfiguration:
     Value: !Ref nodejsSecurityGroupForLaunchConfiguration
     Export:
-      Name: base-nodejsSecurityGroupForLaunchConfiguration
+      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForLaunchConfiguration
 
   nodejsSecurityGroupForALB:
     Value: !Ref nodejsSecurityGroupForALB
@@ -74,4 +80,4 @@ Outputs:
   nodejsSecurityGroupForRDS:
     Value: !Ref nodejsSecurityGroupForRDS
     Export:
-      Name: base-nodejsSecurityGroupForRDS
+      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForRDS

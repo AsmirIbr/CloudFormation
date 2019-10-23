@@ -3,50 +3,339 @@ Description: Security groups for nodeJS
 
 Parameters:
 
-  VPCId:
+  Prefix: 
     Type: String
+
+  Environment:
+    Type: String
+
+  GithubUsername:
+    Type: String
+
+  GithubRepositoryName:
+    Type: String
+
+  GithubBranch:
+    Type: String
+
+  GithubPersonalAccessToken:
+    Type: String
+    NoEcho: true
   
-  nodejsS3:
-    Type: String
-
-  DBName:
-    Type: String
-
-  DBMasterUserPassword:
-    Type: String
-
-  DBMasterUsername:
-    Type: String
-
 Resources:
 
-  nodejsCreateS3BucketAndSNS:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        nodejsS3: !Ref nodejsS3
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-S3-and-SNS.yml"
+# SECRETS MANAGER FOR TOKEN
 
-  nodejsSecurityGroups:
-    Type: AWS::CloudFormation::Stack
+  MySecretB:
+    Type: 'AWS::SecretsManager::Secret'
     Properties:
-      Parameters:
-        VPCId: !Ref VPCId
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-security-groups.yml" #required
+      Name: MySecretForGithubToken
+      SecretString: !Sub '{"token":"${GithubPersonalAccessToken}"}'
+      Tags:
+        -
+          Key: Costs
+          Value: intern
 
-  nodejsRoles:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        nodejsS3: !Ref nodejsS3
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-roles.yml" #required
+# ROLE FOR EC2
 
-  nodejsCreateDB:
-    Type: AWS::CloudFormation::Stack
+  nodejsRoleForEC2:
+    Type: "AWS::IAM::Role"
     Properties:
-      Parameters:
-        DBName: !Ref DBName
-        DBMasterUserPassword: !Ref DBMasterUserPassword
-        DBMasterUsername: !Ref DBMasterUsername
-        SecurityGroup: !GetAtt nodejsSecurityGroups.Outputs.nodejsSecurityGroupForRDS
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-rds.yml"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforAWSCodeDeploy
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+      Path: /
+      RoleName: !Sub ${Prefix}-${Environment}-EC2-role
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# INSTANCE PROFILE FOR EC2
+
+  nodejsInstanceProfileForEC2:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles: [ !Ref nodejsRoleForEC2 ]
+
+# ROLE FOR CODE BUILD
+
+  nodejsRoleForCodeBuild:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "codebuild.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Description: Allows CodeBuild to call AWS services on your behalf
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+      Path: /
+      RoleName: nodejsRoleForCodeBuild
+      Policies:
+        - PolicyName: !Sub ${Prefix}-${Environment}-CodeBuild-role
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:*
+                Resource: "*"
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# ROLE FOR CODE DEPLOY
+
+  nodejsRoleForCodeDeploy:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Sid: ""
+            Principal:
+              Service:
+              - "codedeploy.us-west-1.amazonaws.com"
+              - "codedeploy.eu-west-3.amazonaws.com"
+              - "codedeploy.eu-west-2.amazonaws.com"
+              - "codedeploy.sa-east-1.amazonaws.com"
+              - "codedeploy.us-west-2.amazonaws.com"
+              - "codedeploy.ap-northeast-2.amazonaws.com"
+              - "codedeploy.us-east-2.amazonaws.com"
+              - "codedeploy.eu-west-1.amazonaws.com"
+              - "codedeploy.ap-southeast-1.amazonaws.com"
+              - "codedeploy.ap-south-1.amazonaws.com"
+              - "codedeploy.eu-central-1.amazonaws.com"
+              - "codedeploy.ap-northeast-1.amazonaws.com"
+              - "codedeploy.ap-east-1.amazonaws.com"
+              - "codedeploy.us-east-1.amazonaws.com"
+              - "codedeploy.ap-southeast-2.amazonaws.com"
+              - "codedeploy.ca-central-1.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Description: "Allows CodeDeploy to call AWS services on your behalf."
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AutoScalingFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
+      Path: /
+      RoleName: !Sub ${Prefix}-${Environment}-CodeDeploy-role
+      Policies:
+        - PolicyName: codedepoloyS3policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:*
+                Resource: "*"
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# ROLE FOR CODE PIPELINE
+
+  nodejsRoleForCodePipeline:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+      Description: Allows CodePipeline to call AWS services on your behalf.
+      RoleName: nodejsRoleForCodePipeline
+      Policies:
+        - PolicyName: CloudPipelinePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "cloudformation:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codebuild:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "codedeploy:*"
+                Resource: "*"
+              - Effect: Allow
+                Action: "sns:Publish"
+                Resource: "*"
+              - Effect: Allow
+                Action: s3:*
+                Resource: "*"
+              - Effect: Allow
+                Action: "ec2:*"
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: "*"
+
+# S3 CLOUDFORMATION BUCKET
+
+  cloudformationS3bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub ${Prefix}-${Environment}-cloudformation-bucket
+      Tags:
+        - Key: Costs
+          Value: intern
+
+# S3 ARTEFACT BUCKET
+
+  nodejsS3bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Sub ${Prefix}-${Environment}-artefact-bucket
+      Tags:
+        - Key: Costs
+          Value: intern
+  
+# CODEPIPELINE
+
+  CloudFormationCodepipeline:
+    Type: "AWS::CodePipeline::Pipeline"
+    Properties:
+      ArtifactStore:
+        Type: S3 
+        Location: !Ref cloudformationS3bucket
+      Name: !Sub ${Prefix}-${Environment}-CloudFormation-stacks
+      RestartExecutionOnUpdate: true
+      RoleArn: !GetAtt nodejsRoleForCodePipeline.Arn
+      Stages:
+        - Name: GetSource
+          Actions:
+            - Name: Source
+              ActionTypeId: 
+                Category: Source
+                Owner: ThirdParty
+                Version: 1 
+                Provider: GitHub 
+              OutputArtifacts:
+                - Name: SourceOutput 
+              Region: !Ref "AWS::Region"
+              Configuration:
+                Owner: !Ref "GithubUsername"
+                Repo: !Ref "GithubRepositoryName"
+                Branch: !Ref "GithubBranch"
+                PollForSourceChanges: true
+                OAuthToken: !Ref "GithubPersonalAccessToken"
+              RunOrder: 1 
+        - Name: GetStacks
+          Actions:
+            - Name: Stacks
+              ActionTypeId: 
+                Category: Deploy
+                Owner: AWS
+                Version: 1 
+                Provider: S3 
+              InputArtifacts: 
+                - Name: SourceOutput
+              Region: !Ref "AWS::Region"
+              Configuration:
+                BucketName: !Ref cloudformationS3bucket
+                Extract: true
+              RunOrder: 2
+        - Name: Approval 
+          Actions: 
+            - Name: ManualApproval
+              ActionTypeId: 
+                Category: Approval
+                Owner: AWS 
+                Version: 1 
+                Provider: Manual
+              RunOrder: 3
+        - Name: Deploy 
+          Actions: 
+            - Name: Depoloy-master
+              ActionTypeId: 
+                Category: Deploy
+                Owner: AWS 
+                Version: 1 
+                Provider: CloudFormation
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_NAMED_IAM
+                RoleArn: arn:aws:iam::743584032881:role/asmir-Cloudformation
+                StackName: !Sub ${Prefix}-${Environment}-Master-template
+                TemplateConfiguration: 'SourceOutput::masterStacks/master-parameters.json'
+                TemplatePath: 'SourceOutput::masterStacks/master.yml'
+              OutputArtifacts: 
+                - Name: OutputMaster
+              InputArtifacts:
+                - Name: SourceOutput
+              RunOrder: 4
+        - Name: Deploy
+          Actions: 
+            - Name: Deploy-infrastructure
+              ActionTypeId: 
+                Category: Deploy
+                Owner: AWS 
+                Version: 1 
+                Provider: CloudFormation
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_NAMED_IAM
+                RoleArn: arn:aws:iam::743584032881:role/asmir-Cloudformation
+                StackName: !Sub ${Prefix}-${Environment}-Infrastructure-template
+                TemplateConfiguration: 'SourceOutput::masterStacks/infrastructure-parameters.json'
+                TemplatePath: 'SourceOutput::masterStacks/infrastructure.yml'
+              InputArtifacts:
+                - Name: SourceOutput
+                - Name: OutputMaster
+              RunOrder: 4
+
+Outputs:
+
+  nodejsInstanceProfileForEC2:
+    Value: !Ref nodejsInstanceProfileForEC2
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-InstanceProfileForEC2
+
+  nodejsRoleForCodeBuild:
+    Value: !Ref nodejsRoleForCodeBuild
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-RoleForCodeBuild
+
+  nodejsRoleForCodeDeploy:
+    Value: !GetAtt nodejsRoleForCodeDeploy.Arn
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-RoleForCodeDeploy
+
+  nodejsRoleForCodePipeline:
+    Value: !GetAtt nodejsRoleForCodePipeline.Arn
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-RoleForCodePipeline
+
+  cloudformationS3bucket:
+    Value: !Ref cloudformationS3bucket
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-cloudformationS3bucket
+
+  nodejsS3bucket:
+    Value: !Ref nodejsS3bucket
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-nodejsS3bucket

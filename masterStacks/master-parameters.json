@@ -1,0 +1,10 @@
+{ 
+    "Parameters": {
+      "Prefix": "awso",
+      "Environment": "production",
+      "EmailSNS": "asmir.ibrovikj@intertec.io",
+      "VPCId": "vpc-8a2eb4e2",
+      "DBName": "Lottery",
+      "DBMasterUsername": "dbAdmin"
+    }
+  }

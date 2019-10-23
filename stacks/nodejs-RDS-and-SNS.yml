@@ -1,0 +1,99 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+  Prefix: 
+    Type: String
+
+  Environment:
+    Type: String
+
+  EmailSNS:
+    Type: String
+
+  DBName:
+    Type: String
+
+  DBMasterUsername:
+    Type: String
+
+  SecurityGroupRDS:
+    Type: String
+
+Resources:
+
+# SECRETS MANAGER FOR RDS
+
+
+  secretsRDS:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: MySecretForRDS
+      Description: "This secret has a dynamically generated secret password."
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DBMasterUsername}"}'
+        GenerateStringKey: "password"
+        PasswordLength: 30
+        ExcludeCharacters: '"@/\'
+      Tags:
+        -
+          Key: Costs
+          Value: intern
+
+# RDS instance
+
+  RDSDBParameterGroup: 
+    Properties: 
+      Description: "CloudFormation Sample Parameter Group"
+      Family: mysql5.7
+      Parameters: 
+        sql_mode: IGNORE_SPACE
+    Type: "AWS::RDS::DBParameterGroup"
+
+  nodejsRDS:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      AllocatedStorage: "20"
+      DBInstanceClass: db.t2.micro #required
+      DBInstanceIdentifier: !Sub ${Prefix}-${Environment}-${AWS::StackName}-db
+      DBParameterGroupName: !Ref RDSDBParameterGroup
+      DBName: !Ref DBName
+      DeleteAutomatedBackups: true
+      DeletionProtection: false
+      Engine: MySQL
+      EngineVersion: "5.7.22"
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref 'secretsRDS',  ':SecretString:password}}' ]]
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref 'secretsRDS',  ':SecretString:username}}' ]]
+      Port: "3306"
+      PubliclyAccessible: false
+      SourceRegion: !Ref AWS::Region
+      Tags:
+        - Key: Costs
+          Value: intern
+      VPCSecurityGroups:
+        - Ref: SecurityGroupRDS
+
+  SecretRDSInstanceAttachment:
+    Type: "AWS::SecretsManager::SecretTargetAttachment"
+    Properties:
+      SecretId: !Ref secretsRDS
+      TargetId: !Ref nodejsRDS
+      TargetType: AWS::RDS::DBInstance
+
+# SNS FOR CodePipeline ( Manual approval )
+
+  SNStopicForManualApproval:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: ManualApproval
+        Subscription:
+          - Protocol: email
+            Endpoint: !Ref EmailSNS
+
+Outputs:
+
+  SNStopicForManualApproval:
+    Value: !Ref SNStopicForManualApproval
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-SNStopicForManualApproval
