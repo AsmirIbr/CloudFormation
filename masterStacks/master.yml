@@ -33,9 +33,7 @@ Resources:
         DBName: !Ref DBName
         DBMasterUsername: !Ref DBMasterUsername
         SecurityGroupRDS: !GetAtt nodejsSecurityGroups.Outputs.nodejsSecurityGroupForRDS
-      TemplateURL: 
-        Fn::ImportValue:
-          !Sub "https://${awso-production-cloudformationS3bucket}.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-RDS-and-SNS.yml"
+      TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-RDS-and-SNS.yml"
 
   nodejsSecurityGroups:
     Type: AWS::CloudFormation::Stack
@@ -44,6 +42,4 @@ Resources:
         Prefix: !Ref Prefix
         Environment: !Ref Environment
         VPCId: !Ref VPCId
-      TemplateURL: 
-        Fn::ImportValue:
-          !Sub "https://${awso-production-cloudformationS3bucket}.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-security-groups.yml" #required
+      TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-security-groups.yml" #required
