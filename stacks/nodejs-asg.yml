@@ -37,6 +37,9 @@ Parameters:
   DialectDB:
     Type: String
 
+  TargetGroup:
+    Type: String
+
 Resources:
 
   MySecretB:
@@ -366,7 +369,7 @@ Resources:
       HealthCheckGracePeriod: 60
       HealthCheckType: ELB
       TargetGroupARNs: 
-        - Fn::ImportValue: infrastructure-nodejsTargetGroup
+        - !Ref TargetGroup
       LaunchConfigurationName: !Ref "nodejsLaunchConfiguration"
       MaxSize: "1"
       MinSize: "1"

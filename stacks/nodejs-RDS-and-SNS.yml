@@ -25,14 +25,13 @@ Resources:
 
 # SECRETS MANAGER FOR RDS
 
-
   secretsRDS:
     Type: 'AWS::SecretsManager::Secret'
     Properties:
       Name: MySecretForRDS
       Description: "This secret has a dynamically generated secret password."
       GenerateSecretString:
-        SecretStringTemplate: !Sub '{"username": "${DBMasterUsername}"}'
+        SecretStringTemplate: !Sub '{"username": "${DBMasterUsername}", "host":  "$(Fn::GetAtt: nodejsRDS, Endpoint.Port)", "engine": "mysql", "dbname": "${nodejsRDS}"}'
         GenerateStringKey: "password"
         PasswordLength: 30
         ExcludeCharacters: '"@/\'
@@ -97,3 +96,18 @@ Outputs:
     Value: !Ref SNStopicForManualApproval
     Export:
       Name: !Sub ${Prefix}-${Environment}-SNStopicForManualApproval
+
+  nodejsRDSendpoint:
+    Value: !GetAtt nodejsRDS.Endpoint.Address
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-nodejsRDSendpoint
+
+  nodejsRDSport:
+    Value: !GetAtt nodejsRDS.Endpoint.Port
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-nodejsRDSport
+
+  secretsRDS:
+    Value: !Ref secretsRDS
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-secretsRDS
