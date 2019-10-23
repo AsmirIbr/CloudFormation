@@ -44,7 +44,7 @@ Resources:
         Subnet2: !Select [ 1, !Ref Subnets ] 
         Subnet3: !Select [ 2, !Ref Subnets ] 
         VPCId: !Ref VPCId
-      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/Stacks/stacks/nodejs-alb.yml" #required
+      TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-alb.yml" #required
     
   nodejsASG:
     Type: AWS::CloudFormation::Stack
