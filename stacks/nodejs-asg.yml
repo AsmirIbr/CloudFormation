@@ -83,9 +83,9 @@ Resources:
       KeyName: !Ref KeyName
       LaunchConfigurationName: awso-nodejsLaunchConfiguration
       IamInstanceProfile: 
-        Fn::ImportValue: base-nodejsInstanceProfileForEC2
+        Fn::ImportValue: awso-production-InstanceProfileForEC2
       SecurityGroups: 
-        - Fn::ImportValue: base-nodejsSecurityGroupForLaunchConfiguration
+        - Fn::ImportValue: awso-production-nodejsSecurityGroupForLaunchConfiguration
       UserData:  
         Fn::Base64: !Sub |
           #!/bin/bash -ex
