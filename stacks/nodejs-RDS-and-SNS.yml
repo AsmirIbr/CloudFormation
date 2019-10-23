@@ -56,7 +56,7 @@ Resources:
     Properties:
       AllocatedStorage: "20"
       DBInstanceClass: db.t2.micro #required
-      DBInstanceIdentifier: !Sub ${Prefix}-${Environment}-${AWS::StackName}-db
+      DBInstanceIdentifier: !Sub ${AWS::StackName}-db
       DBParameterGroupName: !Ref RDSDBParameterGroup
       DBName: !Ref DBName
       DeleteAutomatedBackups: true
