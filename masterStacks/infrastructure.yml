@@ -71,5 +71,6 @@ Resources:
         GithubRepositoryName: !Ref GithubRepositoryName 
         GithubBranch: !Ref GithubBranch 
         nodejsS3: !ImportValue awso-production-nodejsS3bucket 
+        autoscaling: !GetAtt nodejsASG.Outputs.nodejsAutoScalingGroup
       TemplateURL: "https://asmir-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-codepipeline.yml" #required
   

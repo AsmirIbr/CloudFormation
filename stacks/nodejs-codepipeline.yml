@@ -18,6 +18,9 @@ Parameters:
   nodejsS3:
     Type: String
 
+  autoscaling:
+    Type: String
+
 Resources:
 
 # CODE BUILD PROJECT
@@ -56,8 +59,7 @@ Resources:
     Type: "AWS::CodeDeploy::DeploymentGroup"
     Properties:
       ApplicationName: !Ref "nodejsCodeDeployApplication"
-      AutoScalingGroups:
-        - Fn::ImportValue: infrastructure-nodejsAutoScalingGroup
+      AutoScalingGroups: !Ref autoscaling
       DeploymentGroupName: "nodejsDeploymentGroup"
       ServiceRoleArn: 
         Fn::ImportValue: base-nodejsRoleForCodeDeploy

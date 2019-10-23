@@ -386,6 +386,5 @@ Outputs:
 
   nodejsAutoScalingGroup:
     Value: !Ref nodejsAutoScalingGroup
-    Description: '{{resolve:secretsmanager:MySecretB:SecretString:password}}'
     Export:
       Name: infrastructure-nodejsAutoScalingGroup
