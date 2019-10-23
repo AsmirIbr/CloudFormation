@@ -107,7 +107,7 @@ Outputs:
     Export:
       Name: !Sub ${Prefix}-${Environment}-nodejsRDSport
 
-   nodejsRDSport:
+  nodejsRDSport:
     Value: !Ref nodejsRDS
     Export:
       Name: !Sub ${Prefix}-${Environment}-nodejsRDSport
