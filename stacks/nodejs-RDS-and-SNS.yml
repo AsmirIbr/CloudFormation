@@ -110,7 +110,7 @@ Outputs:
   nodejsRDS:
     Value: !Ref nodejsRDS
     Export:
-      Name: !Sub ${Prefix}-${Environment}-nodejsRDSport
+      Name: !Sub ${Prefix}-${Environment}-nodejsRDS
 
   secretsRDS:
     Value: !Ref secretsRDS
