@@ -3,6 +3,12 @@ Description: Security groups for nodeJS
 
 Parameters:
 
+  Environment:
+    Type: String
+  
+  Prefix:
+    Type: String
+
   Subnet1: 
     Type: String
 
@@ -81,7 +87,7 @@ Resources:
       Scheme: internet-facing
       Type: application
       SecurityGroups: 
-      - Fn::ImportValue: awso-production-nodejsSecurityGroupForALB
+      - Fn::ImportValue: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForALB
       Tags:
       - Key: 'Name'
         Value: 'nodejsALB'
@@ -93,9 +99,9 @@ Outputs:
   nodejsALB:
     Value: !Ref nodejsALB
     Export: 
-      Name: infrastructure-nodejsALB
+      Name: !Sub ${Prefix}-${Environment}-nodejsALB
 
   nodejsTargetGroup:
     Value: !Ref nodejsTargetGroup
     Export: 
-      Name: infrastructure-nodejsTargetGroup
+      Name: !Sub ${Prefix}-${Environment}-nodejsTargetGroup

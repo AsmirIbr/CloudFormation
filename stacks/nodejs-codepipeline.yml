@@ -3,6 +3,12 @@ Description: Security groups for nodeJS
 
 Parameters:
 
+  Prefix: 
+    Type: String
+
+  Environment:
+    Type: String
+
   GithubUsername:
     Type: String
 
@@ -39,7 +45,7 @@ Resources:
           NamespaceType: BUILD_ID
           Type: S3
       ServiceRole: 
-        Fn::ImportValue: awso-production-RoleForCodeBuild
+        Fn::ImportValue: !Sub ${Prefix}-${Environment}-RoleForCodeBuild
       Environment: 
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:2.0
@@ -59,10 +65,11 @@ Resources:
     Type: "AWS::CodeDeploy::DeploymentGroup"
     Properties:
       ApplicationName: !Ref "nodejsCodeDeployApplication"
-      AutoScalingGroups: !Ref autoscaling
+      AutoScalingGroups:
+        - !Ref autoscaling
       DeploymentGroupName: "nodejsDeploymentGroup"
       ServiceRoleArn: 
-        Fn::ImportValue: awso-production-RoleForCodeDeploy
+        Fn::ImportValue: !Sub ${Prefix}-${Environment}-RoleForCodeDeploy
   
 # CODEPIPELINE
 
@@ -75,7 +82,7 @@ Resources:
       Name: nodejsCodepipeline
       RestartExecutionOnUpdate: true
       RoleArn: 
-        Fn::ImportValue: awso-production-RoleForCodePipeline
+        Fn::ImportValue: !Sub ${Prefix}-${Environment}-RoleForCodePipeline
       Stages:
         - Name: GetSource
           Actions:
@@ -120,7 +127,7 @@ Resources:
                 Provider: Manual
               Configuration:
                 NotificationArn: 
-                  Fn::ImportValue: awso-production-SNStopicForManualApproval
+                  Fn::ImportValue: !Sub ${Prefix}-${Environment}-SNStopicForManualApproval
               RunOrder: 3
         - Name: Deploy 
           Actions: 

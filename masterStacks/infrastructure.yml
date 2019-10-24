@@ -22,16 +22,19 @@ Parameters:
   Subnets:
     Type: CommaDelimitedList
 
-  GithubUsername:
+  # GithubUsername:
+  #   Type: String
+
+  # GithubRepositoryName:
+  #   Type: String
+
+  # GithubBranch:
+  #   Type: String
+
+  Environment:
     Type: String
 
-  GithubRepositoryName:
-    Type: String
-
-  GithubBranch:
-    Type: String
-
-  Evnironment:
+  Prefix: 
     Type: String
 
 Resources:
@@ -40,6 +43,8 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
+        Prefix: !Ref Prefix
+        Environment: !Ref Environment
         Subnet1: !Select [ 0, !Ref Subnets ] 
         Subnet2: !Select [ 1, !Ref Subnets ] 
         Subnet3: !Select [ 2, !Ref Subnets ] 
@@ -50,10 +55,11 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
+        Prefix: !Ref Prefix
+        Environment: !Ref Environment
         ImageId: !Ref ImageId
         InstanceType: !Ref InstanceType
         KeyName: !Ref KeyName
-        Evnironment: !Ref Evnironment
         TargetGroup: !GetAtt nodejsALB.Outputs.nodejsTargetGroup
         NameDB: !ImportValue 'awso-production-DBName'
         UsernameDB: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-secretsRDS', ':SecretString:username}}' ]]
@@ -63,15 +69,17 @@ Resources:
         DialectDB: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-secretsRDS', ':SecretString:engine}}' ]]
       TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-asg.yml" #required
   
-  nodejsPipeline:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      Parameters:
-        GithubUsername: !Ref GithubUsername 
-        GithubPersonalAccessToken: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-MySecretB', ':SecretString:token}}' ]] 
-        GithubRepositoryName: !Ref GithubRepositoryName 
-        GithubBranch: !Ref GithubBranch 
-        nodejsS3: !ImportValue awso-production-nodejsS3bucket 
-        autoscaling: !GetAtt nodejsASG.Outputs.nodejsAutoScalingGroup
-      TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-codepipeline.yml" #required
+  # nodejsPipeline:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #      Parameters:
+  #        Prefix: !Ref Prefix
+  #        Environment: !Ref Environment
+  #       GithubUsername: !Ref GithubUsername 
+  #       GithubPersonalAccessToken: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-MySecretB', ':SecretString:token}}' ]] 
+  #       GithubRepositoryName: !Ref GithubRepositoryName 
+  #       GithubBranch: !Ref GithubBranch 
+  #       nodejsS3: !ImportValue awso-production-nodejsS3bucket 
+  #       autoscaling: !GetAtt nodejsASG.Outputs.nodejsAutoScalingGroup
+  #     TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-codepipeline.yml" #required
   

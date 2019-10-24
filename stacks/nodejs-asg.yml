@@ -3,6 +3,12 @@ Description: Security groups for nodeJS
 
 Parameters:
 
+  Prefix: 
+    Type: String
+
+  Environment:
+    Type: String
+
   ImageId:
     Type: AWS::EC2::Image::Id
 
@@ -14,9 +20,6 @@ Parameters:
       - t2.large
 
   KeyName:
-    Type: String
-
-  Evnironment:
     Type: String
 
   UsernameDB:
@@ -42,36 +45,6 @@ Parameters:
 
 Resources:
 
-  MySecretB:
-    Type: 'AWS::SecretsManager::Secret'
-    Properties:
-      Name: MySecretForAppB
-      Description: This secret has a hardcoded password in SecretString (use GenerateSecretString instead)
-      SecretString: '{"username":"MasterUsername","password":"secret-password"}'
-      Tags:
-        -
-          Key: AppName
-          Value: AppB
-
-  MySecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Description: This is a secret
-  MySecretResourcePolicy:
-    Type: AWS::SecretsManager::ResourcePolicy
-    Properties:
-      SecretId:
-        Ref: MySecret
-      ResourcePolicy:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Deny
-          Principal:
-            AWS:
-              Fn::Sub: arn:aws:iam::${AWS::AccountId}:root
-          Action: secretsmanager:DeleteSecret
-          Resource: "*"
-
 #AUTO SCALING GROUP - LAUNCH CONFIGURATION
 
   nodejsLaunchConfiguration:
@@ -83,9 +56,9 @@ Resources:
       KeyName: !Ref KeyName
       LaunchConfigurationName: awso-nodejsLaunchConfiguration
       IamInstanceProfile: 
-        Fn::ImportValue: awso-production-InstanceProfileForEC2
+        Fn::ImportValue: !Sub ${Prefix}-${Environment}-InstanceProfileForEC2
       SecurityGroups: 
-        - Fn::ImportValue: awso-production-nodejsSecurityGroupForLaunchConfiguration
+        - Fn::ImportValue: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForLaunchConfiguration
       UserData:  
         Fn::Base64: !Sub |
           #!/bin/bash -ex
@@ -387,4 +360,4 @@ Outputs:
   nodejsAutoScalingGroup:
     Value: !Ref nodejsAutoScalingGroup
     Export:
-      Name: infrastructure-nodejsAutoScalingGroup
+      Name: !Sub ${Prefix}-${Environment}-nodejsAutoScalingGroup
