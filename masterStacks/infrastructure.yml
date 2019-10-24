@@ -73,8 +73,8 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
        Parameters:
-         Prefix: !Ref Prefix
-         Environment: !Ref Environment
+        Prefix: !Ref Prefix
+        Environment: !Ref Environment
         GithubUsername: !Ref GithubUsername 
         GithubPersonalAccessToken: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-MySecretB', ':SecretString:token}}' ]] 
         GithubRepositoryName: !Ref GithubRepositoryName 
