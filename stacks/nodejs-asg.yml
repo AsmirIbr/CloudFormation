@@ -367,7 +367,7 @@ Resources:
       Cooldown: "150"
       DesiredCapacity: "1"
       HealthCheckGracePeriod: 60
-      HealthCheckType: ELB
+      HealthCheckType: EC2
       TargetGroupARNs: 
         - !Ref TargetGroup
       LaunchConfigurationName: !Ref "nodejsLaunchConfiguration"
