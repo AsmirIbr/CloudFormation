@@ -81,7 +81,7 @@ Resources:
       Scheme: internet-facing
       Type: application
       SecurityGroups: 
-      - Fn::ImportValue: 	awso-production-nodejsSecurityGroupForALB
+      - Fn::ImportValue: awso-production-nodejsSecurityGroupForALB
       Tags:
       - Key: 'Name'
         Value: 'nodejsALB'
