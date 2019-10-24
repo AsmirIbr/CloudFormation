@@ -103,7 +103,7 @@ Resources:
                 APP_NAME="app"
                 USER="root"
                 GROUP="$USER"
-                NODE_ENV=${Evnironment}
+                NODE_ENV=${Environment}
                 PORT="3000"
                 APP_DIR="/root/lottery/dist"
                 NODE_APP="index.js"
