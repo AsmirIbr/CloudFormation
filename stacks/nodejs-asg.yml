@@ -256,6 +256,26 @@ Resources:
             '/var/dbConfig/mysql.json':
               content: !Sub |
                 {
+                  "dev": {
+                    "username": "${UsernameDB}",
+                    "password": "${PasswordDB}",
+                    "database": "${NameDB}",
+                    "host": "${HostDB}",
+                    "port": "${PortDB}",
+                    "dialect": "${DialectDB}",
+                    "operatorsAliases": false,
+                    "pool": {
+                      "max": 5,
+                      "min": 0,
+                      "acquire": 10000,
+                      "idle": 10000
+                      },
+                    "define": {
+                     "paranoid": true
+                    }
+                    },
+                  "staging": {
+                    },
                   "production": {
                     "username": "${UsernameDB}",
                     "password": "${PasswordDB}",
@@ -269,7 +289,7 @@ Resources:
                       "min": 0,
                       "acquire": 10000,
                       "idle": 10000
-                    },
+                      },
                     "define": {
                       "paranoid": true
                     }
