@@ -75,7 +75,7 @@ Outputs:
   nodejsSecurityGroupForALB:
     Value: !Ref nodejsSecurityGroupForALB
     Export:
-      Name: base-nodejsSecurityGroupForALB
+      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForALB
 
   nodejsSecurityGroupForRDS:
     Value: !Ref nodejsSecurityGroupForRDS

@@ -39,7 +39,7 @@ Resources:
           NamespaceType: BUILD_ID
           Type: S3
       ServiceRole: 
-        Fn::ImportValue: base-nodejsRoleForCodeBuild
+        Fn::ImportValue: awso-production-nodejsRoleForCodeBuild
       Environment: 
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/standard:2.0
@@ -62,7 +62,7 @@ Resources:
       AutoScalingGroups: !Ref autoscaling
       DeploymentGroupName: "nodejsDeploymentGroup"
       ServiceRoleArn: 
-        Fn::ImportValue: base-nodejsRoleForCodeDeploy
+        Fn::ImportValue: awso-production-nodejsRoleForCodeDeploy
   
 # CODEPIPELINE
 
@@ -75,7 +75,7 @@ Resources:
       Name: nodejsCodepipeline
       RestartExecutionOnUpdate: true
       RoleArn: 
-        Fn::ImportValue: base-nodejsRoleForCodePipeline
+        Fn::ImportValue: awso-production-nodejsRoleForCodePipeline
       Stages:
         - Name: GetSource
           Actions:
@@ -120,7 +120,7 @@ Resources:
                 Provider: Manual
               Configuration:
                 NotificationArn: 
-                  Fn::ImportValue: base-SNStopicForManualApproval
+                  Fn::ImportValue: awso-production-SNStopicForManualApproval
               RunOrder: 3
         - Name: Deploy 
           Actions: 
