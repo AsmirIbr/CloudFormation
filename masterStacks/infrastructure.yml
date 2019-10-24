@@ -55,7 +55,7 @@ Resources:
         KeyName: !Ref KeyName
         Evnironment: !Ref Evnironment
         TargetGroup: !GetAtt nodejsALB.Outputs.nodejsTargetGroup
-        NameDB: !ImportValue 'awso-production-nodejsRDS'
+        NameDB: !ImportValue 'awso-production-DBName'
         UsernameDB: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-secretsRDS', ':SecretString:username}}' ]]
         PasswordDB: !Join ['', ['{{resolve:secretsmanager:', !ImportValue 'awso-production-secretsRDS', ':SecretString:password}}' ]]
         HostDB: !ImportValue 'awso-production-nodejsRDSendpoint'
