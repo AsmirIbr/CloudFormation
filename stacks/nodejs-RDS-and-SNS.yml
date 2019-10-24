@@ -108,9 +108,9 @@ Outputs:
       Name: !Sub ${Prefix}-${Environment}-nodejsRDSport
 
   nodejsRDS:
-    Value: !Ref nodejsRDS
+    Value: !Ref DBName
     Export:
-      Name: !Sub ${Prefix}-${Environment}-nodejsRDS
+      Name: !Sub ${Prefix}-${Environment}-DBName
 
   secretsRDS:
     Value: !Ref secretsRDS
