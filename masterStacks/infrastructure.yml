@@ -72,7 +72,7 @@ Resources:
   nodejsPipeline:
     Type: AWS::CloudFormation::Stack
     Properties:
-       Parameters:
+      Parameters:
         Prefix: !Ref Prefix
         Environment: !Ref Environment
         GithubUsername: !Ref GithubUsername 
