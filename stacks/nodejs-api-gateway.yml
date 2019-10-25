@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Security groups for nodeJS
+
+Parameters:
+
+  Prefix: 
+    Type: String
+
+  Environment:
+    Type: String
+    
+Resources:
+
+  LogicalID:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      ApiKeySourceType: HEADER
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: !Sub ${Prefix}-${Environment}-apigateway
+  
+
+Outputs:
+
+  nodejsSecurityGroupForLaunchConfiguration:
+    Value: !Ref nodejsSecurityGroupForLaunchConfiguration
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForLaunchConfiguration
+
+  nodejsSecurityGroupForALB:
+    Value: !Ref nodejsSecurityGroupForALB
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForALB
+
+  nodejsSecurityGroupForRDS:
+    Value: !Ref nodejsSecurityGroupForRDS
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForRDS

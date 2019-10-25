@@ -334,7 +334,7 @@ Resources:
           wget https://aws-codedeploy-eu-west-2.s3.eu-west-2.amazonaws.com/latest/install
           chmod +x ./install
           sudo ./install auto
-          # CFN-INI
+          # CFN-INIT
           yum install -y aws-cfn-bootstrap
           /opt/aws/bin/cfn-init --region ${AWS::Region} --stack ${AWS::StackName} --resource nodejsLaunchConfiguration
     Metadata:
