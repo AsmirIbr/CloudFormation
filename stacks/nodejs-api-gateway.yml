@@ -106,11 +106,17 @@ Resources:
         IntegrationResponses: 
           - StatusCode: "200"
             ResponseTemplates: {"application/json": ""}
+          - StatusCode: "404"
+            SelectionPattern: "404"
+            ResponseTemplates: {"application/json": "Glup si"}
         IntegrationHttpMethod: GET
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
       MethodResponses:
         - StatusCode: "200"
+          ResponseModels: 
+            application/json: !Ref nodejsGetMethodModel
+        - StatusCode: "404"
           ResponseModels: 
             application/json: !Ref nodejsGetMethodModel
       ResourceId: !Ref nodejsApigatewayResourceGetById #required
