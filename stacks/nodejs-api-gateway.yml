@@ -97,41 +97,41 @@ Resources:
       PathPart: "{id}" #required
       RestApiId: !Ref nodejsApigateway #required
 
-  # nodejsApigatewayMethodGetbyID:
-  #   Type: "AWS::ApiGateway::Method"
-  #   Properties:
-  #     AuthorizationType: NONE
-  #     HttpMethod: GET #required
-  #     Integration:
-  #       IntegrationResponses: 
-  #         - StatusCode: "200"
-  #           ResponseTemplates: {"application/json": ""}
-  #       IntegrationHttpMethod: GET
-  #       Type: HTTP
-  #       Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
-  #     MethodResponses:
-  #       - StatusCode: "200"
-  #         ResponseModels: 
-  #           application/json: !Ref nodejsGetMethodModel
-  #     ResourceId: !Ref nodejsApigatewayResourceGetById #required
-  #     RestApiId: !Ref nodejsApigateway #required
+  nodejsApigatewayMethodGetbyID:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET #required
+      Integration:
+        IntegrationResponses: 
+          - StatusCode: "200"
+            ResponseTemplates: {"application/json": ""}
+        IntegrationHttpMethod: GET
+        Type: HTTP
+        Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels: 
+            application/json: !Ref nodejsGetMethodModel
+      ResourceId: !Ref nodejsApigatewayResourceGetById #required
+      RestApiId: !Ref nodejsApigateway #required
 
-  # nodejsApigatewayMethodPutbyID:
-  #   Type: "AWS::ApiGateway::Method"
-  #   Properties:
-  #     AuthorizationType: NONE
-  #     HttpMethod: PUT #required
-  #     Integration:
-  #       IntegrationResponses: 
-  #         - StatusCode: "200"
-  #           ResponseTemplates: {"application/json": ""}
-  #       IntegrationHttpMethod: PUT
-  #       Type: HTTP
-  #       Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
-  #     MethodResponses:
-  #       - StatusCode: "200"
-  #         ResponseModels: 
-  #           application/json: !Ref nodejsGetMethodModel
-  #     ResourceId: !Ref nodejsApigatewayResourceGetById #required
-  #     RestApiId: !Ref nodejsApigateway #required
+  nodejsApigatewayMethodPutbyID:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST #required
+      Integration:
+        IntegrationResponses: 
+          - StatusCode: "200"
+            ResponseTemplates: {"application/json": ""}
+        IntegrationHttpMethod: POST
+        Type: HTTP
+        Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels: 
+            application/json: !Ref nodejsGetMethodModel
+      ResourceId: !Ref nodejsApigatewayResourceGetById #required
+      RestApiId: !Ref nodejsApigateway #required
   
