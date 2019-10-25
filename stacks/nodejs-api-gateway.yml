@@ -19,21 +19,3 @@ Resources:
         Types:
           - REGIONAL
       Name: !Sub ${Prefix}-${Environment}-apigateway
-  
-
-Outputs:
-
-  nodejsSecurityGroupForLaunchConfiguration:
-    Value: !Ref nodejsSecurityGroupForLaunchConfiguration
-    Export:
-      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForLaunchConfiguration
-
-  nodejsSecurityGroupForALB:
-    Value: !Ref nodejsSecurityGroupForALB
-    Export:
-      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForALB
-
-  nodejsSecurityGroupForRDS:
-    Value: !Ref nodejsSecurityGroupForRDS
-    Export:
-      Name: !Sub ${Prefix}-${Environment}-nodejsSecurityGroupForRDS
