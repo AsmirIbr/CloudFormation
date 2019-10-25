@@ -35,6 +35,7 @@ Resources:
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
+            ResponseTemplates: {"application/json": "$input.json('$.body')"}
         IntegrationHttpMethod: GET
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
