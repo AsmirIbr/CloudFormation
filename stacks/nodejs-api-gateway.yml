@@ -105,7 +105,6 @@ Resources:
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
-            ResponseTemplates: {"application/json": ""}
           - StatusCode: "404"
             SelectionPattern: "404"
             ResponseTemplates: {"application/json": "Glup si"}
@@ -118,7 +117,7 @@ Resources:
             application/json: !Ref nodejsGetMethodModel
         - StatusCode: "404"
           ResponseModels: 
-            application/json: !Ref nodejsGetMethodModel
+            application/json: !Ref nodejsErrorModel
       ResourceId: !Ref nodejsApigatewayResourceGetById #required
       RestApiId: !Ref nodejsApigateway #required
 
@@ -130,7 +129,9 @@ Resources:
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
-            ResponseTemplates: {"application/json": ""}
+          - StatusCode: "404"
+            SelectionPattern: "404"
+            ResponseTemplates: {"application/json": "Glup si"}
         IntegrationHttpMethod: POST
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
@@ -138,6 +139,9 @@ Resources:
         - StatusCode: "200"
           ResponseModels: 
             application/json: !Ref nodejsGetMethodModel
+        - StatusCode: "404"
+          ResponseModels: 
+            application/json: !Ref nodejsErrorModel
       ResourceId: !Ref nodejsApigatewayResourceGetById #required
       RestApiId: !Ref nodejsApigateway #required
   
