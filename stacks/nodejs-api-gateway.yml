@@ -15,7 +15,7 @@ Resources:
     Type: AWS::ApiGateway::Model
     Properties: 
       ContentType: application/json
-      Name: GetModel
+      Name: ResponseModel
       RestApiId: !Ref nodejsApigateway
       Schema: 
         $schema: http://json-schema.org/draft-04/schema#
