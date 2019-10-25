@@ -111,6 +111,8 @@ Resources:
         IntegrationHttpMethod: GET
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery/{id}"
+        RequestParameters: 
+          Paths: id
       MethodResponses:
         - StatusCode: "200"
           ResponseModels: 
@@ -125,14 +127,14 @@ Resources:
     Type: "AWS::ApiGateway::Method"
     Properties:
       AuthorizationType: NONE
-      HttpMethod: POST #required
+      HttpMethod: PUT #required
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
           - StatusCode: "404"
             SelectionPattern: "404"
             ResponseTemplates: {"application/json": "Glup si"}
-        IntegrationHttpMethod: POST
+        IntegrationHttpMethod: PUT
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery/{id}"
       MethodResponses:
