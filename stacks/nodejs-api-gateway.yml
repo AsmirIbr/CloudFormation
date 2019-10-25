@@ -31,10 +31,11 @@ Resources:
     Type: "AWS::ApiGateway::Method"
     Properties:
       AuthorizationType: NONE
-      HttpMethod: "GET" #required
+      HttpMethod: GET #required
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
+        IntegrationHttpMethod: GET
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
       ResourceId: !Ref nodejsApigatewayResource #required
