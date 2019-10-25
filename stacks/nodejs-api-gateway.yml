@@ -11,6 +11,31 @@ Parameters:
     
 Resources:
 
+  nodejsGetMethodModel:
+    Type: AWS::ApiGateway::Model
+    Properties: 
+      ContentType: application/json
+      Name: GetModel
+      RestApiId: !Ref nodejsApigateway
+      Schema: 
+        $schema: http://json-schema.org/draft-04/schema#
+        title: Empty Schema
+        type: object
+  
+  nodejsErrorModel:
+    Type: AWS::ApiGateway::Model
+    Properties: 
+      ContentType: application/json
+      Name: GetModel
+      RestApiId: !Ref nodejsApigateway
+      Schema: 
+        $schema: http://json-schema.org/draft-04/schema#
+        title: Error Schema
+        type: object
+        properties:
+          message:
+            type: string
+
   nodejsApigateway:
     Type: "AWS::ApiGateway::RestApi"
     Properties:
@@ -27,7 +52,7 @@ Resources:
       PathPart: lottery #required
       RestApiId: !Ref nodejsApigateway #required
 
-  nodejsApigatewayMethod:
+  nodejsApigatewayMethodGet:
     Type: "AWS::ApiGateway::Method"
     Properties:
       AuthorizationType: NONE
@@ -46,15 +71,67 @@ Resources:
       ResourceId: !Ref nodejsApigatewayResource #required
       RestApiId: !Ref nodejsApigateway #required
 
-  nodejsGetMethodModel:
-    Type: AWS::ApiGateway::Model
-    Properties: 
-      ContentType: application/json=
-      Name: GetModel
-      RestApiId: !Ref nodejsApigateway
-      Schema: 
-        $schema: http://json-schema.org/draft-04/schema#
-        title: Empty Schema
-        type: object
-  
+  nodejsApigatewayMethodPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST #required
+      Integration:
+        IntegrationResponses: 
+          - StatusCode: "200"
+            ResponseTemplates: {"application/json": ""}
+        IntegrationHttpMethod: GET
+        Type: HTTP
+        Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels: 
+            application/json: !Ref nodejsGetMethodModel
+      ResourceId: !Ref nodejsApigatewayResource #required
+      RestApiId: !Ref nodejsApigateway #required
+
+  nodejsApigatewayResourceGetById:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      ParentId: !Ref nodejsApigatewayResource #required
+      PathPart: {id} #required
+      RestApiId: !Ref nodejsApigateway #required
+
+  nodejsApigatewayMethodGet:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: GET #required
+      Integration:
+        IntegrationResponses: 
+          - StatusCode: "200"
+            ResponseTemplates: {"application/json": ""}
+        IntegrationHttpMethod: GET
+        Type: HTTP
+        Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels: 
+            application/json: !Ref nodejsGetMethodModel
+      ResourceId: !Ref nodejsApigatewayResourceGetById #required
+      RestApiId: !Ref nodejsApigateway #required
+
+  nodejsApigatewayMethodPost:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST #required
+      Integration:
+        IntegrationResponses: 
+          - StatusCode: "200"
+            ResponseTemplates: {"application/json": ""}
+        IntegrationHttpMethod: GET
+        Type: HTTP
+        Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseModels: 
+            application/json: !Ref nodejsGetMethodModel
+      ResourceId: !Ref nodejsApigatewayResourceGetById #required
+      RestApiId: !Ref nodejsApigateway #required
   
