@@ -35,6 +35,7 @@ Resources:
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
+        Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
       ResourceId: !Ref nodejsApigatewayResource #required
       RestApiId: !Ref nodejsApigateway #required
