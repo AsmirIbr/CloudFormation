@@ -11,7 +11,7 @@ Parameters:
     
 Resources:
 
-  LogicalID:
+  nodejsApigateway:
     Type: "AWS::ApiGateway::RestApi"
     Properties:
       ApiKeySourceType: HEADER
@@ -19,3 +19,11 @@ Resources:
         Types:
           - REGIONAL
       Name: !Sub ${Prefix}-${Environment}-apigateway
+
+  nodejsApigatewayResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      ParentId: !GetAtt nodejsApigateway.RootResourceId #required
+      PathPart: lottery #required
+      RestApiId: !Ref nodejsApigateway #required
+  
