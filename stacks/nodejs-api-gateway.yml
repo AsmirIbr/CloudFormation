@@ -149,27 +149,9 @@ Resources:
       ResourceId: !Ref nodejsApigatewayResourceGetById #required
       RestApiId: !Ref nodejsApigateway #required
 
-    # nodejsApigatewayMethodDelete:
-    #   Type: "AWS::ApiGateway::Method"
-    #   Properties:
-    #     AuthorizationType: NONE
-    #     HttpMethod: DELETE #required
-    #     Integration:
-    #       IntegrationResponses: 
-    #         - StatusCode: "200"
-    #         - StatusCode: "404"
-    #           SelectionPattern: "404"
-    #           ResponseTemplates: {"application/json": "Glup si"}
-    #       IntegrationHttpMethod: DELETE
-    #       Type: HTTP
-    #       Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery/{id}"
-    #     MethodResponses:
-    #       - StatusCode: "200"
-    #         ResponseModels: 
-    #           application/json: !Ref nodejsGetMethodModel
-    #       - StatusCode: "404"
-    #         ResponseModels: 
-    #           application/json: !Ref nodejsErrorModel
-    #     ResourceId: !Ref nodejsApigatewayResourceGetById #required
-    #     RestApiId: !Ref nodejsApigateway #required
+  nodejsApiGatewayDeploymen:
+    Type: "AWS::ApiGateway::Deployment"
+    Properties:
+      RestApiId: !Ref nodejsApigateway #required
+      StageName: prod
   
