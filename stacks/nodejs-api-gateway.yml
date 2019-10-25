@@ -102,6 +102,8 @@ Resources:
     Properties:
       AuthorizationType: NONE
       HttpMethod: GET #required
+      RequestParameters: 
+        method.request.path.id: true
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
@@ -111,8 +113,6 @@ Resources:
         IntegrationHttpMethod: GET
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery/{id}"
-        RequestParameters: 
-          Name: {integration.request.path.id: true}
       MethodResponses:
         - StatusCode: "200"
           ResponseModels: 
