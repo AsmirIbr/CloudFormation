@@ -42,7 +42,7 @@ Resources:
       MethodResponses:
         - StatusCode: "200"
           ResponseModels: 
-            Body: !Ref nodejsGetMethodModel
+            application/json: !Ref nodejsGetMethodModel
       ResourceId: !Ref nodejsApigatewayResource #required
       RestApiId: !Ref nodejsApigateway #required
 
