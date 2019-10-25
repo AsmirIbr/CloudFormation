@@ -112,7 +112,7 @@ Resources:
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery/{id}"
         RequestParameters: 
-          'method.request.path.id': 'id'
+          method.request.path.id: true
       MethodResponses:
         - StatusCode: "200"
           ResponseModels: 
