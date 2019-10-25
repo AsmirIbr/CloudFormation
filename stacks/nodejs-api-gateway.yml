@@ -80,7 +80,7 @@ Resources:
         IntegrationResponses: 
           - StatusCode: "200"
             ResponseTemplates: {"application/json": ""}
-        IntegrationHttpMethod: GET
+        IntegrationHttpMethod: POST
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
       MethodResponses:
@@ -97,7 +97,7 @@ Resources:
       PathPart: {id} #required
       RestApiId: !Ref nodejsApigateway #required
 
-  nodejsApigatewayMethodGet:
+  nodejsApigatewayMethodGetbyID:
     Type: "AWS::ApiGateway::Method"
     Properties:
       AuthorizationType: NONE
@@ -116,16 +116,16 @@ Resources:
       ResourceId: !Ref nodejsApigatewayResourceGetById #required
       RestApiId: !Ref nodejsApigateway #required
 
-  nodejsApigatewayMethodPost:
+  nodejsApigatewayMethodPutbyID:
     Type: "AWS::ApiGateway::Method"
     Properties:
       AuthorizationType: NONE
-      HttpMethod: POST #required
+      HttpMethod: PUT #required
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
             ResponseTemplates: {"application/json": ""}
-        IntegrationHttpMethod: GET
+        IntegrationHttpMethod: PUT
         Type: HTTP
         Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery"
       MethodResponses:
