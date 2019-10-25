@@ -31,7 +31,7 @@ Resources:
     Type: "AWS::ApiGateway::Method"
     Properties:
       AuthorizationType: NONE
-      HttpMethod: GET #required
+      HttpMethod: "GET" #required
       Integration:
         IntegrationResponses: 
           - StatusCode: "200"
