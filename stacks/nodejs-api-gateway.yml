@@ -40,7 +40,7 @@ Resources:
         - ResponseModels: 
             message : "hjgjh"
           StatusCode: "200"
-      ResourceId: !GetAtt nodejsApigateway.RootResourceId #required
+      ResourceId: !Ref nodejsApigateway #required
       RestApiId: !Ref nodejsApigatewayResource #required
   
   
