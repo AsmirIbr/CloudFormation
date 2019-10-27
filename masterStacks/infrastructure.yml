@@ -83,11 +83,11 @@ Resources:
         autoscaling: !GetAtt nodejsASG.Outputs.nodejsAutoScalingGroup
       TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-codepipeline.yml" #required
 
-  # nodejsAPIgateway:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     Parameters:
-  #       Prefix: !Ref Prefix
-  #       Environment: !Ref Environment
-  #     TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-api-gateway.yml" #required
+  nodejsAPIgateway:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        Prefix: !Ref Prefix
+        Environment: !Ref Environment
+      TemplateURL: "https://awso-production-cloudformation-bucket.s3.eu-west-2.amazonaws.com/stacks/nodejs-api-gateway.yml" #required
   
