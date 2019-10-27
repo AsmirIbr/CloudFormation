@@ -149,9 +149,9 @@ Resources:
   #     ResourceId: !Ref nodejsApigatewayResourceGetById #required
   #     RestApiId: !Ref nodejsApigateway #required
 
-  nodejsApiGatewayDeploymen:
-    Type: "AWS::ApiGateway::Deployment"
-    Properties:
-      RestApiId: !Ref nodejsApigateway #required
-      StageName: prod
+  # nodejsApiGatewayDeploymen:
+  #   Type: "AWS::ApiGateway::Deployment"
+  #   Properties:
+  #     RestApiId: !Ref nodejsApigateway #required
+  #     StageName: prod
   
