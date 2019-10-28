@@ -175,6 +175,30 @@ Resources:
       ResourceId: !Ref nodejsApigatewayResourceGetById #required
       RestApiId: !Ref nodejsApigateway #required
 
+  LogicalID:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code: #required
+        ZipFile: !Sub
+          const AWS = require('aws-sdk')
+          var apigateway = new AWS.APIGateway({apiVersion: '2015/07/09'});
+          AWS.config.region = 'eu-west-2';
+
+          exports.handler = async (event) => {
+          // TODO implement
+              var params = {
+              restApiId: ${nodejsApigateway}, /* required */
+              stageName: 'prod'
+              };
+              apigateway.createDeployment(params, function(err, data) {
+              if (err) console.log(err, err.stack); // an error occurred
+              else     console.log(data);           // successful response
+              });
+          };
+      Handler: index.handler #required
+      Role: arn:aws:iam::743584032881:role/service-role/first-lambda-role-7zaec60s #required
+      Runtime: nodejs10.x #required
+  
   nodejsApiGatewayDeployment:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
