@@ -154,4 +154,3 @@ Resources:
     Properties:
       RestApiId: !Ref nodejsApigateway #required
       StageName: prod
-  
