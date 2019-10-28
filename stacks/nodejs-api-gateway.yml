@@ -21,6 +21,32 @@ Resources:
         $schema: http://json-schema.org/draft-04/schema#
         title: Empty Schema
         type: object
+
+  nodejsPostMethodModel:
+    Type: AWS::ApiGateway::Model
+    Properties: 
+      ContentType: application/json
+      Name: Users
+      RestApiId: !Ref nodejsApigateway
+      Schema: 
+        required:
+        - email
+        - lastCode
+        - name
+        - phone
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          lastCode:
+            type: string
+          name:
+            type: string
+          email:
+            type: string
+          phone:
+            type: string
   
   nodejsErrorModel:
     Type: AWS::ApiGateway::Model
