@@ -149,7 +149,7 @@ Resources:
       ResourceId: !Ref nodejsApigatewayResourceGetById #required
       RestApiId: !Ref nodejsApigateway #required
 
-  nodejsApiGatewayDeploymen:
+  nodejsApiGatewayDeployment-${AWS::Random}:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
       RestApiId: !Ref nodejsApigateway #required
