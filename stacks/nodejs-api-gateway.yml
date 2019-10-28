@@ -153,5 +153,5 @@ Resources:
     Type: "AWS::ApiGateway::Deployment"
     Properties:
       RestApiId: !Ref nodejsApigateway #required
-      StageName: prod
+      StageName: production
   
