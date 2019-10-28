@@ -180,19 +180,20 @@ Resources:
     Properties:
       Code: #required
         ZipFile: !Sub |
-          const AWS = require('aws-sdk')
-          var apigateway = new AWS.APIGateway({apiVersion: '2015/07/09'});
-          AWS.config.region = 'eu-west-2';
+              const AWS = require('aws-sdk')
+              var apigateway = new AWS.APIGateway({apiVersion: '2015/07/09'});
+              AWS.config.region = 'eu-west-2';
 
           exports.handler = async (event) => {
-          // TODO implement
+
               var params = {
-              restApiId: '${nodejsApigateway}', /* required */
-              stageName: 'prod'
+              restApiId: '${nodejsApigateway}', 
+              stageName: '${Environment}'
               };
+
               apigateway.createDeployment(params, function(err, data) {
-              if (err) console.log(err, err.stack); // an error occurred
-              else     console.log(data);           // successful response
+              if (err) return(err, err.stack); 
+              else     return(data);           
               });
           };
       Handler: index.handler #required

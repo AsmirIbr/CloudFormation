@@ -198,6 +198,15 @@ Resources:
                   - lambda:invokefunction
                   - lambda:listfunctions
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                Resource: "arn:aws:logs:eu-west-2:743584032881:*"
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "arn:aws:logs:eu-west-2:743584032881:log-group:/aws/lambda/first-lambda:*"
 
 # S3 CLOUDFORMATION BUCKET
 
