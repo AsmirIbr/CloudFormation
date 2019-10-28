@@ -180,9 +180,9 @@ Resources:
     Properties:
       Code: #required
         ZipFile: !Sub |
-              const AWS = require('aws-sdk')
-              var apigateway = new AWS.APIGateway({apiVersion: '2015/07/09'});
-              AWS.config.region = 'eu-west-2';
+            const AWS = require('aws-sdk');
+            var apigateway = new AWS.APIGateway({apiVersion: '2015/07/09'});
+            AWS.config.region = 'eu-west-2';
 
           exports.handler = async (event) => {
 
@@ -192,8 +192,8 @@ Resources:
               };
 
               apigateway.createDeployment(params, function(err, data) {
-              if (err) return(err, err.stack); 
-              else     return(data);           
+              if (err) console.log(err, err.stack); 
+              else     console.log(data);           
               });
           };
       Handler: index.handler #required
