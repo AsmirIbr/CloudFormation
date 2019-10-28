@@ -116,14 +116,6 @@ Resources:
       ResourceId: !Ref nodejsApigatewayResource #required
       RestApiId: !Ref nodejsApigateway #required
 
-  valudatorForPostUsersMethod:
-    Type: "AWS::ApiGateway::RequestValidator"
-    Properties:
-      Name: validator
-      RestApiId: !Ref nodejsApigateway #required
-      ValidateRequestBody: !Ref nodejsPostMethodModel
-  
-
   nodejsApigatewayResourceGetById:
     Type: "AWS::ApiGateway::Resource"
     Properties:
