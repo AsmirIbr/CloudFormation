@@ -195,6 +195,12 @@ Resources:
               if (err) console.log(err, err.stack); 
               else     console.log(data);           
               });
+
+              const response = {
+                  statusCode: 200,
+                  body: JSON.stringify("Success"),
+              };
+              return response;
           };
       Handler: index.handler #required
       Role: arn:aws:iam::743584032881:role/service-role/first-lambda-role-7zaec60s #required
