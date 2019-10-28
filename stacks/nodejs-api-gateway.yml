@@ -197,7 +197,7 @@ Resources:
           };
       Handler: index.handler #required
       Role: arn:aws:iam::743584032881:role/service-role/first-lambda-role-7zaec60s #required
-      Runtime: nodejs #required
+      Runtime: nodejs8.10 #required
   
   nodejsApiGatewayDeployment:
     Type: "AWS::ApiGateway::Deployment"
