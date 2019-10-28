@@ -116,40 +116,40 @@ Resources:
       ResourceId: !Ref nodejsApigatewayResource #required
       RestApiId: !Ref nodejsApigateway #required
 
-  nodejsApigatewayResourceGetById:
-    Type: "AWS::ApiGateway::Resource"
-    Properties:
-      ParentId: !Ref nodejsApigatewayResource #required
-      PathPart: "{id}" #required
-      RestApiId: !Ref nodejsApigateway #required
+  # nodejsApigatewayResourceGetById:
+  #   Type: "AWS::ApiGateway::Resource"
+  #   Properties:
+  #     ParentId: !Ref nodejsApigatewayResource #required
+  #     PathPart: "{id}" #required
+  #     RestApiId: !Ref nodejsApigateway #required
 
-  nodejsApigatewayMethodGetbyID:
-    Type: "AWS::ApiGateway::Method"
-    Properties:
-      AuthorizationType: NONE
-      HttpMethod: GET #required
-      RequestParameters: 
-        method.request.path.id: true
-      Integration:
-        IntegrationResponses: 
-          - StatusCode: "200"
-          - StatusCode: "404"
-            SelectionPattern: "404"
-            ResponseTemplates: {"application/json": "Glup si!"}
-        IntegrationHttpMethod: GET
-        Type: HTTP
-        Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery/{id}"
-        RequestParameters: 
-          'integration.request.path.id': 'method.request.path.id'
-      MethodResponses:
-        - StatusCode: "200"
-          ResponseModels: 
-            application/json: !Ref nodejsGetMethodModel
-        - StatusCode: "404"
-          ResponseModels: 
-            application/json: !Ref nodejsErrorModel
-      ResourceId: !Ref nodejsApigatewayResourceGetById #required
-      RestApiId: !Ref nodejsApigateway #required
+  # nodejsApigatewayMethodGetbyID:
+  #   Type: "AWS::ApiGateway::Method"
+  #   Properties:
+  #     AuthorizationType: NONE
+  #     HttpMethod: GET #required
+  #     RequestParameters: 
+  #       method.request.path.id: true
+  #     Integration:
+  #       IntegrationResponses: 
+  #         - StatusCode: "200"
+  #         - StatusCode: "404"
+  #           SelectionPattern: "404"
+  #           ResponseTemplates: {"application/json": "Glup si!"}
+  #       IntegrationHttpMethod: GET
+  #       Type: HTTP
+  #       Uri: "http://nodejsApplicationLoadbalancer-472309917.eu-west-2.elb.amazonaws.com/lottery/{id}"
+  #       RequestParameters: 
+  #         'integration.request.path.id': 'method.request.path.id'
+  #     MethodResponses:
+  #       - StatusCode: "200"
+  #         ResponseModels: 
+  #           application/json: !Ref nodejsGetMethodModel
+  #       - StatusCode: "404"
+  #         ResponseModels: 
+  #           application/json: !Ref nodejsErrorModel
+  #     ResourceId: !Ref nodejsApigatewayResourceGetById #required
+  #     RestApiId: !Ref nodejsApigateway #required
 
   # nodejsApigatewayMethodPutbyID:
   #   Type: "AWS::ApiGateway::Method"
@@ -182,25 +182,46 @@ Resources:
         ZipFile: !Sub |
           const AWS = require('aws-sdk');
           var apigateway = new AWS.APIGateway({apiVersion: '2015/07/09'});
+          var codepipeline = new AWS.CodePipeline()
           AWS.config.region = 'eu-west-2';
 
           exports.handler = function (event, context, callback){
-    
+
               const done = (err, data) => callback(null, {
                 statusCode: err ? 500 : 200,
                 body: err ? JSON.stringify({
                   'statusCode': 500,
                   'message': err.message
-                }) : JSON.stringify(data)
+                }) : JSON.stringify(event)
               })
               
               var params = {
-              restApiId: 'p1a3u7y1bb', 
-              stageName: 'production'
+                restApiId: '${nodejsApigateway}', 
+                stageName: '${Environment}'
               };
               
               apigateway.createDeployment(params, done);
-          };
+
+              const jobId = event["CodePipeline.job"].id
+              try {
+                const params = {
+                  jobId
+                }
+                codepipeline.putJobSuccessResult(params).promise()
+              }
+              catch (err) {
+                const params = {
+                  jobId,
+                  failureDetails: {
+                    message: err.toString(),
+                    type: 'JobFailed',
+                    externalExecutionId: context.invokeid
+                  }
+                }
+                codepipeline.putJobFailureResult(params).promise()
+              }
+            };
+
       Handler: index.handler #required
       Role: arn:aws:iam::743584032881:role/service-role/first-lambda-role-7zaec60s #required
       Runtime: nodejs8.10 #required
