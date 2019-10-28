@@ -193,6 +193,11 @@ Resources:
                 Action:
                   - iam:PassRole
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - lambda:invokefunction
+                  - lambda:listfunctions
+                Resource: "*"
 
 # S3 CLOUDFORMATION BUCKET
 
