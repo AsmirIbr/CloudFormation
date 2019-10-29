@@ -332,10 +332,7 @@ Resources:
                 Version: 1 
                 Provider: Lambda
               Configuration:
-                FunctionName: 
-                  Fn::GetArtifactAtt:
-                  - OutputInfrastructure
-                  - lambdaFunction
+                FunctionName: !ImportValue awso-production-LogicalID
               InputArtifacts:
                 - Name: OutputInfrastructure
               RunOrder: 6

@@ -81,6 +81,7 @@ Resources:
   nodejsApigatewayMethodGet:
     Type: "AWS::ApiGateway::Method"
     Properties:
+      ApiKeyRequired: true
       AuthorizationType: NONE
       HttpMethod: GET #required
       Integration:
@@ -225,6 +226,12 @@ Resources:
       Handler: index.handler #required
       Role: arn:aws:iam::743584032881:role/service-role/first-lambda-role-7zaec60s #required
       Runtime: nodejs8.10 #required
+
+  apiKey:
+    Type: "AWS::ApiGateway::ApiKey"
+    Properties:
+      Name: key
+  
   
   # nodejsApiGatewayDeployment:
   #   Type: "AWS::ApiGateway::Deployment"
