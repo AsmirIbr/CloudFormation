@@ -232,9 +232,22 @@ Resources:
     Properties:
       Enabled: true
       Name: key
-      StageKeys:
-        - RestApiId: !Ref nodejsApigateway
-          StageName: !Ref Environment
+
+  usagePlan:
+    Type: "AWS::ApiGateway::UsagePlan"
+    Properties:
+      ApiStages:
+        - ApiId: !Ref nodejsApigateway
+          Stage: !Ref ${Environment}
+      UsagePlanName: !Sub ${Prefix}-${Environment}-plan
+
+  LogicalID:
+    Type: "AWS::ApiGateway::UsagePlanKey"
+    Properties:
+      KeyId: !Ref apiKey #required
+      KeyType: API_KEY #required
+      UsagePlanId: !Ref usagePlan #required
+  
   
   
   # nodejsApiGatewayDeployment:
