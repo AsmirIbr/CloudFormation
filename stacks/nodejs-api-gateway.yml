@@ -176,56 +176,56 @@ Resources:
       ResourceId: !Ref nodejsApigatewayResourceGetById #required
       RestApiId: !Ref nodejsApigateway #required
 
-  deployApiFunction:
-    Type: "AWS::Lambda::Function"
-    Properties:
-      Code: #required
-        ZipFile: !Sub |
-          const AWS = require('aws-sdk');
-          var apigateway = new AWS.APIGateway({apiVersion: '2015/07/09'});
-          var codepipeline = new AWS.CodePipeline()
-          AWS.config.region = 'eu-west-2';
+  # deployApiFunction:
+  #   Type: "AWS::Lambda::Function"
+  #   Properties:
+  #     Code: #required
+  #       ZipFile: !Sub |
+  #         const AWS = require('aws-sdk');
+  #         var apigateway = new AWS.APIGateway({apiVersion: '2015/07/09'});
+  #         var codepipeline = new AWS.CodePipeline()
+  #         AWS.config.region = 'eu-west-2';
 
-          exports.handler = function (event, context, callback){
+  #         exports.handler = function (event, context, callback){
 
-              const done = (err, data) => callback(null, {
-                statusCode: err ? 500 : 200,
-                body: err ? JSON.stringify({
-                  'statusCode': 500,
-                  'message': err.message
-                }) : JSON.stringify(event)
-              })
+  #             const done = (err, data) => callback(null, {
+  #               statusCode: err ? 500 : 200,
+  #               body: err ? JSON.stringify({
+  #                 'statusCode': 500,
+  #                 'message': err.message
+  #               }) : JSON.stringify(event)
+  #             })
               
-              var params = {
-                restApiId: '${nodejsApigateway}', 
-                stageName: '${Environment}'
-              };
+  #             var params = {
+  #               restApiId: '${nodejsApigateway}', 
+  #               stageName: '${Environment}'
+  #             };
               
-              apigateway.createDeployment(params, done);
+  #             apigateway.createDeployment(params, done);
 
-              const jobId = event["CodePipeline.job"].id
-              try {
-                const params = {
-                  jobId
-                }
-                codepipeline.putJobSuccessResult(params).promise()
-              }
-              catch (err) {
-                const params = {
-                  jobId,
-                  failureDetails: {
-                    message: err.toString(),
-                    type: 'JobFailed',
-                    externalExecutionId: context.invokeid
-                  }
-                }
-                codepipeline.putJobFailureResult(params).promise()
-              }
-            };
+  #             const jobId = event["CodePipeline.job"].id
+  #             try {
+  #               const params = {
+  #                 jobId
+  #               }
+  #               codepipeline.putJobSuccessResult(params).promise()
+  #             }
+  #             catch (err) {
+  #               const params = {
+  #                 jobId,
+  #                 failureDetails: {
+  #                   message: err.toString(),
+  #                   type: 'JobFailed',
+  #                   externalExecutionId: context.invokeid
+  #                 }
+  #               }
+  #               codepipeline.putJobFailureResult(params).promise()
+  #             }
+  #           };
 
-      Handler: index.handler #required
-      Role: arn:aws:iam::743584032881:role/service-role/first-lambda-role-7zaec60s #required
-      Runtime: nodejs8.10 #required
+  #     Handler: index.handler #required
+  #     Role: arn:aws:iam::743584032881:role/service-role/first-lambda-role-7zaec60s #required
+  #     Runtime: nodejs8.10 #required
 
   JWT:
     Type: "AWS::Lambda::Function"
