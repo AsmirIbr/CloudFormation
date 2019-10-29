@@ -310,6 +310,6 @@ Resources:
 Outputs:
 
   lambdaFunction:
-    Value: !Ref LogicalID
+    Value: !Ref deployApiFunction
     Export:
       Name: !Sub ${Prefix}-${Environment}-LogicalID
