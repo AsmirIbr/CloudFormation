@@ -332,7 +332,7 @@ Resources:
                 Version: 1 
                 Provider: Lambda
               Configuration:
-                FunctionName: awso-production-LogicalID
+                FunctionName: !ImportValue awso-production-LogicalID
               InputArtifacts:
                 - Name: OutputInfrastructure
               RunOrder: 6
