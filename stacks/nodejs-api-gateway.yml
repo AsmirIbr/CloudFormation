@@ -238,10 +238,10 @@ Resources:
     Properties:
       ApiStages:
         - ApiId: !Ref nodejsApigateway
-          Stage: !Ref ${Environment}
+          Stage: !Ref Environment
       UsagePlanName: !Sub ${Prefix}-${Environment}-plan
 
-  LogicalID:
+  usagePlanKey:
     Type: "AWS::ApiGateway::UsagePlanKey"
     Properties:
       KeyId: !Ref apiKey #required
