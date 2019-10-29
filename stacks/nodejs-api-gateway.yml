@@ -230,7 +230,11 @@ Resources:
   apiKey:
     Type: "AWS::ApiGateway::ApiKey"
     Properties:
+      Enabled: true
       Name: key
+      StageKeys:
+        - RestApiId: !Ref nodejsApigateway
+          StageName: !Ref Environment
   
   
   # nodejsApiGatewayDeployment:
