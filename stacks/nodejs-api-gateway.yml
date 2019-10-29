@@ -307,7 +307,7 @@ Resources:
   #   Properties:
   #     RestApiId: !Ref nodejsApigateway #required
   #     StageName: prod
-Outputs:
+# Outputs:
 
   # lambdaFunction:
   #   Value: !Ref deployApiFunction
