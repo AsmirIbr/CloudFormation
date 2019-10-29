@@ -309,7 +309,7 @@ Resources:
   #     StageName: prod
 Outputs:
 
-  lambdaFunction:
-    Value: !Ref deployApiFunction
-    Export:
-      Name: !Sub ${Prefix}-${Environment}-LogicalID
+  # lambdaFunction:
+  #   Value: !Ref deployApiFunction
+  #   Export:
+  #     Name: !Sub ${Prefix}-${Environment}-LogicalID
