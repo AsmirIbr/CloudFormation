@@ -320,7 +320,25 @@ Resources:
               InputArtifacts:
                 - Name: SourceOutput
                 - Name: OutputMaster
-              RunOrder: 4
+              OutputArtifacts: 
+                - Name: OutputInfrastructure
+              RunOrder: 5
+        - Name: Invoke
+          Actions: 
+            - Name: Lambda
+              ActionTypeId: 
+                Category: Invoke
+                Owner: AWS 
+                Version: 1 
+                Provider: Lambda
+              Configuration:
+                FunctionName: 
+                  Fn::GetArtifactAtt:
+                  - OutputInfrastructure
+                  - lambdaFunction
+              InputArtifacts:
+                - Name: OutputInfrastructure
+              RunOrder: 6
 
 Outputs:
 

@@ -231,3 +231,9 @@ Resources:
   #   Properties:
   #     RestApiId: !Ref nodejsApigateway #required
   #     StageName: prod
+Outputs:
+
+  lambdaFunction:
+    Value: !Ref LogicalID
+    Export:
+      Name: !Sub ${Prefix}-${Environment}-LogicalID
