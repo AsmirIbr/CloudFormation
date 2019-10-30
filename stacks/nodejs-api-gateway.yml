@@ -82,7 +82,8 @@ Resources:
     Type: "AWS::ApiGateway::Method"
     Properties:
       ApiKeyRequired: true
-      AuthorizationType: NONE
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref DefaultAuthorizer
       HttpMethod: GET #required
       Integration:
         IntegrationResponses: 
