@@ -292,7 +292,7 @@ Resources:
           - JWT
           - Arn
         - /invocations
-      IdentitySource: tokenHeader
+      IdentitySource: method.request.header.tokenHeader
       Name: DefaultAuthorizer
       RestApiId: !Ref nodejsApigateway #required
       Type: TOKEN #required
