@@ -283,7 +283,15 @@ Resources:
     Type: "AWS::ApiGateway::Authorizer"
     Properties:
       AuthorizerResultTtlInSeconds: 300
-      AuthorizerUri: !GetAtt JWT.Arn
+      AuthorizerUri: !Join 
+      - ''
+      - - 'arn:aws:apigateway:'
+        - !Ref 'AWS::Region'
+        - ':lambda:path/2015-03-31/functions/'
+        - !GetAtt 
+          - JWT
+          - Arn
+        - /invocations
       IdentitySource: tokenHeader
       Name: DefaultAuthorizer
       RestApiId: !Ref nodejsApigateway #required
